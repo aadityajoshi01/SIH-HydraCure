@@ -1,12 +1,12 @@
 {
-  "name": "hydrolens-update",
+  "name": "hydracure-update",
   "version": "1.0.0",
-  "description": "Simple JavaScript static server for Hydrolens website",
+  "description": "Simple JavaScript static server for HydraCure website",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["static", "server", "hydrolens"],
+  "keywords": ["static", "server", "hydracure"],
   "author": "",
   "license": "MIT"
 }

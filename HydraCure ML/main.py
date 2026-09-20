@@ -34,7 +34,7 @@ except Exception as e:
     print(f"❌ Model Loading Error: {e}")
 
 # 4. The Integrated Inference Engine
-def run_hydrolens_inference(event):
+def run_hydracure_inference(event):
     # This function triggers every time your ESP32 updates the /sensors node
     try:
         # Get live data
@@ -76,5 +76,5 @@ def run_hydrolens_inference(event):
         print(f"⚠️ Inference Loop Error: {e}")
 
 # 5. Start the Real-Time Listener
-print("🚀 Hydrolens AI Engine: Online and Listening for Sensor Data...")
-db.reference('/sensors').listen(run_hydrolens_inference)
+print("🚀 HydraCure AI Engine: Online and Listening for Sensor Data...")
+db.reference('/sensors').listen(run_hydracure_inference)

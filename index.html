@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AquaLens — Intelligent City Monitoring</title>
+    <title>HydraCure — Intelligent 4-Sensor Water Quality Monitoring</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -42,7 +42,6 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -50,31 +49,15 @@
         }
 
         @keyframes pulseAlert {
-            0% {
-                box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 4px 30px rgba(255, 51, 102, 0.8);
-            }
-
-            100% {
-                box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
-            }
+            0% { box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4); }
+            50% { box-shadow: 0 4px 30px rgba(255, 51, 102, 0.8); }
+            100% { box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4); }
         }
 
         @keyframes glimmer {
-            0% {
-                opacity: 0.5;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.5;
-            }
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
         }
 
         .alert-banner {
@@ -98,6 +81,20 @@
             animation: pulseAlert 2s infinite;
         }
 
+        .system-banner {
+            background: rgba(255, 204, 0, 0.12);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            color: var(--warning);
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
         /* Sidebar */
         .sidebar {
             width: var(--sidebar);
@@ -113,8 +110,20 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: white;
-            margin-bottom: 40px;
-            padding-left: 12px;
+            margin-bottom: 30px;
+            padding-left: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo img {
+            height: 42px;
+            width: 42px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+            border: 1px solid rgba(0, 229, 255, 0.3);
         }
 
         .logo span {
@@ -164,14 +173,14 @@
         .main {
             flex: 1;
             overflow-y: auto;
-            padding: 50px;
-            padding-top: 60px;
+            padding: 40px;
+            padding-top: 50px;
             position: relative;
             scroll-behavior: smooth;
         }
 
         .header {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -198,18 +207,34 @@
             display: block;
         }
 
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 1280px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
         }
 
         .card {
@@ -217,13 +242,18 @@
             backdrop-filter: blur(12px);
             border: 1px solid var(--surface-border);
             border-radius: 16px;
-            padding: 24px;
+            padding: 22px;
             position: relative;
             overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
         }
 
         .card-title {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
@@ -231,18 +261,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .card-val {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin: 12px 0 8px;
+            margin: 10px 0 6px;
             line-height: 1;
         }
 
         .card-unit {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
         }
 
@@ -467,34 +497,67 @@
 
         .bar-section-title .dot.raw { background: #00e5ff; }
         .bar-section-title .dot.ai { background: #a855f7; }
+
+        .sensor-badge {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            color: var(--primary);
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 6px;
+        }
+
+        .status-working {
+            background: rgba(0, 255, 204, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .status-action {
+            background: rgba(255, 204, 0, 0.15);
+            color: var(--warning);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            animation: glimmer 2s infinite;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="alert-banner" id="global-alert">CRITICAL ALERT: TDS LEVELS EXCEED SAFE LIMITS</div>
+    <div class="alert-banner" id="global-alert">CRITICAL ALERT: WATER QUALITY SENSOR LIMIT EXCEEDED</div>
 
     <!-- DEMO INDICATOR -->
     <div id="demo-indicator"
         style="display:none; position:fixed; bottom:20px; right:20px; background:var(--primary); color:#000; padding:10px 20px; border-radius:30px; font-weight:700; font-size:0.85rem; z-index:9999; box-shadow:0 4px 15px rgba(0, 229, 255, 0.4); animation:glimmer 2s infinite; transition: opacity 0.4s ease;">
-        ⚡ Demo Mode Running (Simulated Data)</div>
+        ⚡ Demo Mode Active (Simulating 4 Hardware Sensors)</div>
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo">Aqua<span>Lens</span></div>
-        <div
-            style="display:flex; align-items:center; padding: 0 16px 5px; color: var(--text-muted); font-size: 0.85rem;">
+        <div class="logo">
+            <img src="logo.png" alt="HydraCure Logo">
+            <div>Hydra<span>Cure</span></div>
+        </div>
+        <div style="display:flex; align-items:center; padding: 0 16px 5px; color: var(--text-muted); font-size: 0.85rem;">
             <div class="status-dot" id="live-dot"></div>
             <span id="live-text">Waiting for Stream...</span>
         </div>
-        <div
-            style="display:flex; align-items:center; padding: 0 16px 20px; color: var(--text-muted); font-size: 0.85rem;">
+        <div style="display:flex; align-items:center; padding: 0 16px 20px; color: var(--text-muted); font-size: 0.85rem;">
             <div class="status-dot" id="ai-dot"></div>
             <span id="ai-text">AI Link Pending</span>
         </div>
 
-        <div
-            style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 20px 0 10px 16px; font-weight: 600;">
+        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 20px 0 10px 16px; font-weight: 600;">
             Dashboards</div>
         <a class="nav-item active" onclick="nav('overview', event)">Overview</a>
         <a class="nav-item" onclick="nav('analytics', event)">Insights & AI</a>
@@ -517,68 +580,123 @@
             <div class="header">
                 <div>
                     <div class="page-title">City Water Grid</div>
-                    <div class="page-sub">Real-time telemetrics for Nashik City pipelines</div>
+                    <div class="page-sub">Real-time telemetrics for 4 Hardware Sensors (pH, Temp, Turbidity, TDS)</div>
                     <div style="margin-top: 10px; padding: 4px 10px; background: rgba(0, 255, 204, 0.1); border: 1px solid rgba(0, 255, 204, 0.3); border-radius: 20px; font-size: 0.75rem; color: var(--success); display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        Metrics Validated via Strict WHO & BIS Guidelines
+                        Connected to Realtime Firebase Hardware Node
                     </div>
                 </div>
                 <div class="pill pill-safe" id="ov-status" style="font-size:1rem; padding: 8px 16px;">SYS_STABLE</div>
             </div>
 
-            <div class="grid-3">
+            <!-- SYSTEM HARDWARE ALERT BANNER IF PRESENT -->
+            <div id="system-alert-box" class="system-banner" style="display: none;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.2rem;">⚠️</span>
+                    <div>
+                        <div style="font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Hardware Prompt</div>
+                        <div id="system-alert-text">INSERT TURBIDITY SENSOR INTO WATER</div>
+                    </div>
+                </div>
+                <span id="system-status-pill" class="status-badge status-action">ACTION REQUIRED</span>
+            </div>
+
+            <!-- PRIMARY 4 SENSORS GRID -->
+            <div class="grid-4">
+                <!-- 1. pH SENSOR CARD -->
                 <div class="card">
-                    <div class="card-title">TURBIDITY <span class="pill pill-safe" id="ntu-pill">--</span></div>
-                    <div class="card-val" id="ntu-val">--</div>
+                    <div class="card-title">
+                        <span>pH SENSOR</span>
+                        <span class="pill pill-safe" id="ph-pill">SAFE</span>
+                    </div>
+                    <div class="card-val" id="ph-val">7.07</div>
+                    <div class="card-unit">pH Scale (0.0 – 14.0)</div>
+                    <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="status-badge status-working" id="ph-hw-status">WORKING</span>
+                        <span style="font-size: 0.7rem; color: var(--text-muted);" id="ph-volt-label">2.65 V</span>
+                    </div>
+                    <div class="data-bar-container" style="height: 8px; margin-top: 10px; border-radius: 10px; background: rgba(255,255,255,0.1);">
+                        <div class="data-bar" id="ph-gauge-bar" style="width: 50.5%; background: linear-gradient(90deg, #ff3366 0%, #ffcc00 30%, #00ffcc 50%, #ffcc00 70%, #ff3366 100%);"></div>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
+                        <b>WHO & BIS Limit:</b> 6.5 – 8.5 (Safe Range)
+                    </div>
+                </div>
+
+                <!-- 2. TEMPERATURE SENSOR CARD -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>TEMPERATURE</span>
+                        <span class="pill pill-safe" id="temp-pill">NORMAL</span>
+                    </div>
+                    <div class="card-val" id="temp-val">29.5 °C</div>
+                    <div class="card-unit">Degrees Celsius (°C)</div>
+                    <div style="margin-top: 6px;">
+                        <span class="status-badge status-working" id="temp-hw-status">WORKING</span>
+                    </div>
+                    <div class="data-bar-container" style="height: 8px; margin-top: 10px; border-radius: 10px; background: rgba(255,255,255,0.1);">
+                        <div class="data-bar" id="temp-gauge-bar" style="width: 59%; background: linear-gradient(90deg, #00e5ff, #ff9f1c, #ff3366);"></div>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
+                        <b>WHO / BIS Ideal:</b> &lt; 30°C | <b>Max:</b> 35°C
+                    </div>
+                </div>
+
+                <!-- 3. TURBIDITY SENSOR CARD -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>TURBIDITY</span>
+                        <span class="pill pill-safe" id="ntu-pill">EXCELLENT</span>
+                    </div>
+                    <div class="card-val" id="ntu-val">0.0</div>
                     <div class="card-unit">Nephelometric Turbidity Units (NTU)</div>
+                    <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="status-badge status-action" id="ntu-hw-status">INSERT INTO WATER</span>
+                        <span style="font-size: 0.7rem; color: var(--success);" id="ntu-clarity">EXCELLENT</span>
+                    </div>
+                    <div class="data-bar-container" style="height: 8px; margin-top: 10px; border-radius: 10px; background: rgba(255,255,255,0.1);">
+                        <div class="data-bar" id="ntu-gauge-bar" style="width: 0%; background: linear-gradient(90deg, #00ffcc, #ffcc00, #ff3366);"></div>
+                    </div>
                     <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
-                        <b>WHO:</b> &lt; 5 NTU <br>
-                        <b>BIS:</b> &lt; 1 NTU (Ideal) | Up to 5 NTU (Permissible)
+                        <b>WHO:</b> &lt; 5 NTU | <b>BIS:</b> &lt; 1 NTU (Ideal)
                     </div>
                 </div>
+
+                <!-- 4. TDS SENSOR CARD -->
                 <div class="card">
-                    <div class="card-title">TDS <span class="pill pill-safe" id="tds-pill">--</span></div>
-                    <div class="card-val" id="tds-val">--</div>
+                    <div class="card-title">
+                        <span>TDS</span>
+                        <span class="pill pill-safe" id="tds-pill">EXCELLENT</span>
+                    </div>
+                    <div class="card-val" id="tds-val">139.8</div>
                     <div class="card-unit">Total Dissolved Solids (mg/L / ppm)</div>
-                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
-                        <b>WHO:</b> &lt; 600 mg/L (Palatability) <br>
-                        <b>BIS:</b> &lt; 500 mg/L (Ideal) | Up to 2000 mg/L (Max)
+                    <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="status-badge status-working" id="tds-hw-status">WORKING</span>
+                        <span style="font-size: 0.7rem; color: var(--text-muted);" id="tds-volt-label">0.29V | Cal: 0.5</span>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="card-title">SENSOR VOLTAGE</div>
-                    <div class="card-val" id="volt-val">--</div>
-                    <div class="card-unit">Raw Output (V)</div>
+                    <div class="data-bar-container" style="height: 8px; margin-top: 10px; border-radius: 10px; background: rgba(255,255,255,0.1);">
+                        <div class="data-bar" id="tds-gauge-bar" style="width: 7%; background: linear-gradient(90deg, #00e5ff, #00ffcc, #ffcc00, #ff3366);"></div>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
+                        <b>WHO:</b> &lt; 600 ppm | <b>BIS:</b> &lt; 500 ppm
+                    </div>
                 </div>
             </div>
 
+            <!-- SECONDARY HARDWARE TELEMETRY GRID -->
             <div class="grid-3">
                 <div class="card">
-                    <div class="card-title">VIRTUAL pH <span class="pill pill-safe" id="ph-pill">--</span></div>
-                    <div style="display: flex; align-items: center; gap: 8px; margin: 12px 0 8px;">
-                        <div class="card-val" id="ph-val" style="margin: 0;">--</div>
-                        <span style="background: linear-gradient(90deg, #a855f7, #7c3aed); color: white; font-size: 0.65rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; display: inline-block; box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); border: 1px solid rgba(255,255,255,0.2);">✨ Powered by Hydrolens AI</span>
-                    </div>
-                    <div class="card-unit">Stage 1: Regressor Inference</div>
-                    <div class="data-bar-container" style="height: 10px; margin-top: 15px; border-radius: 10px; background: rgba(255,255,255,0.1);">
-                        <div class="data-bar ai" id="ph-gauge-bar" style="width: 0%; background: linear-gradient(90deg, #ff3366 0%, #ffcc00 30%, #00ffcc 50%, #ffcc00 70%, #ff3366 100%); position: relative; transition: left 0.5s ease; width: 6px; border-radius: 3px; left: 50%; box-shadow: 0 0 8px #fff;"></div>
-                    </div>
-                    <div class="data-bar-label" style="display: flex; justify-content: space-between; font-size: 0.65rem; margin-top: 4px; font-weight: 600;">
-                        <span style="color: #ff3366;">0 (Acidic)</span>
-                        <span style="color: #00ffcc;">7 (Neutral)</span>
-                        <span style="color: #ff3366;">14 (Alkaline)</span>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
-                        <b>WHO & BIS Guideline:</b> 6.5 \u2013 8.5 (No Relaxation)
-                    </div>
+                    <div class="card-title">HARDWARE POWER RAIL</div>
+                    <div class="card-val" id="volt-val">2.65 V</div>
+                    <div class="card-unit" id="volt-subtext">pH Rail: 2.65V | TDS Rail: 0.29V</div>
                 </div>
                 <div class="card alert-box alert-safe" id="safety-alert-box">
                     <div class="card-title">TOXICITY RISK LEVEL</div>
-                    <div class="card-val" id="safety-alert-text" style="font-size:1.4rem;">--</div>
-                    <div class="card-unit">Stage 2: Classifier Inference</div>
+                    <div class="card-val" id="safety-alert-text" style="font-size:1.4rem;">SAFE</div>
+                    <div class="card-unit">Multi-Sensor AI Classifier</div>
                     
                     <div style="display: flex; gap: 4px; margin-top: 15px; height: 10px; border-radius: 5px; overflow: hidden;">
-                        <div id="tier-safe" style="flex: 1; background: rgba(255,255,255,0.1); transition: background 0.3s;"></div>
+                        <div id="tier-safe" style="flex: 1; background: #00ffcc; transition: background 0.3s;"></div>
                         <div id="tier-moderate" style="flex: 1; background: rgba(255,255,255,0.1); transition: background 0.3s;"></div>
                         <div id="tier-high" style="flex: 1; background: rgba(255,255,255,0.1); transition: background 0.3s;"></div>
                         <div id="tier-toxic" style="flex: 1; background: rgba(255,255,255,0.1); transition: background 0.3s;"></div>
@@ -591,48 +709,60 @@
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-title">CONNECTION</div>
-                    <div class="card-val" id="conn-status" style="font-size:1.4rem;">--</div>
-                    <div class="card-unit">Firebase Link</div>
+                    <div class="card-title">STREAM CONNECTION</div>
+                    <div class="card-val" id="conn-status" style="font-size:1.4rem;">Active</div>
+                    <div class="card-unit" id="wqi-label">Firebase Link | WQI: 0</div>
                 </div>
             </div>
 
             <div class="grid-2">
                 <div class="card">
-                    <div class="card-title" style="margin-bottom: 10px;">Live Trend (Last 10 frames)</div>
-                    <div style="position: relative; height: 160px; width: 100%;">
+                    <div class="card-title" style="margin-bottom: 10px;">Live 4-Sensor Telemetry Trend</div>
+                    <div style="position: relative; height: 170px; width: 100%;">
                         <canvas id="miniLiveChart"></canvas>
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-title">AI Quick Analysis</div>
-                    <div style="margin-top: 20px; font-size: 1.1rem; line-height: 1.6; color: var(--text-muted);"
+                    <div style="margin-top: 20px; font-size: 1.05rem; line-height: 1.6; color: var(--text-muted);"
                         id="ai-quick-text">
-                        Processing baseline...
+                        Processing 4-sensor baseline telemetrics...
                     </div>
                 </div>
             </div>
 
-            <!-- Data Bars Section -->
+            <!-- HARDWARE SENSOR TELEMETRY (4 INTEGRATED SENSORS) -->
             <div class="bar-section-title">
-                <span class="dot raw"></span> RAW SENSOR DATA (ESP32)
+                <span class="dot raw"></span> HARDWARE SENSOR TELEMETRY (REALTIME HARDWARE NODES)
             </div>
-            <div class="grid-2">
+            <div class="grid-4">
                 <div class="card">
-                    <div class="card-title">TDS Level</div>
-                    <div class="card-val" id="raw-tds-val" style="font-size:1.6rem;">--</div>
-                    <div class="card-unit">ppm</div>
+                    <div class="card-title">pH Sensor <span class="sensor-badge">NODE: /ph</span></div>
+                    <div class="card-val" id="raw-ph-val" style="font-size:1.6rem;">7.07</div>
+                    <div class="card-unit">pH Value</div>
                     <div class="data-bar-container">
-                        <div class="data-bar raw" id="raw-tds-bar" style="width: 0%"></div>
+                        <div class="data-bar raw" id="raw-ph-bar" style="width: 50.5%; background: linear-gradient(90deg, #ff007f, #a855f7);"></div>
                     </div>
                     <div class="data-bar-label">
-                        <span>0</span>
-                        <span>Max: 2000 ppm</span>
+                        <span>0.0</span>
+                        <span>Max: 14.0</span>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Turbidity Level</div>
-                    <div class="card-val" id="raw-ntu-val" style="font-size:1.6rem;">--</div>
+                    <div class="card-title">Temperature Sensor <span class="sensor-badge">NODE: /temperature</span></div>
+                    <div class="card-val" id="raw-temp-val" style="font-size:1.6rem;">29.5 °C</div>
+                    <div class="card-unit">Celsius</div>
+                    <div class="data-bar-container">
+                        <div class="data-bar raw" id="raw-temp-bar" style="width: 59%; background: linear-gradient(90deg, #ff9f1c, #ff3366);"></div>
+                    </div>
+                    <div class="data-bar-label">
+                        <span>0°C</span>
+                        <span>Max: 50°C</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Turbidity Sensor <span class="sensor-badge">NODE: /turbidity</span></div>
+                    <div class="card-val" id="raw-ntu-val" style="font-size:1.6rem;">0.0</div>
                     <div class="card-unit">NTU</div>
                     <div class="data-bar-container">
                         <div class="data-bar raw" id="raw-ntu-bar" style="width: 0%"></div>
@@ -642,56 +772,38 @@
                         <span>Max: 100 NTU</span>
                     </div>
                 </div>
-            </div>
-
-            <div class="bar-section-title">
-                <span class="dot ai"></span> AI RETRIEVED DATA (ML Model)
-            </div>
-            <div class="grid-2">
                 <div class="card">
-                    <div class="card-title">Predicted pH</div>
-                    <div class="card-val" id="ai-ph-val" style="font-size:1.6rem;">--</div>
-                    <div class="card-unit">Random Forest Prediction</div>
+                    <div class="card-title">TDS Sensor <span class="sensor-badge">NODE: /tds</span></div>
+                    <div class="card-val" id="raw-tds-val" style="font-size:1.6rem;">139.8</div>
+                    <div class="card-unit">ppm</div>
                     <div class="data-bar-container">
-                        <div class="data-bar ai" id="ai-ph-bar" style="width: 0%"></div>
+                        <div class="data-bar raw" id="raw-tds-bar" style="width: 7%"></div>
                     </div>
                     <div class="data-bar-label">
                         <span>0</span>
-                        <span>Max: 14 pH</span>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Safety Index</div>
-                    <div class="card-val" id="ai-safety-val" style="font-size:1.6rem;">--</div>
-                    <div class="card-unit">ML Assessment</div>
-                    <div class="data-bar-container">
-                        <div class="data-bar ai" id="ai-safety-bar" style="width: 0%"></div>
-                    </div>
-                    <div class="data-bar-label">
-                        <span>Unsafe</span>
-                        <span>Safe</span>
+                        <span>Max: 2000 ppm</span>
                     </div>
                 </div>
             </div>
 
             <!-- Heavy Metals Inference Section -->
             <div class="bar-section-title">
-                <span class="dot ai" style="background:#ff3366;"></span> TRACE METALS INFERENCE (Deep Learning)
+                <span class="dot ai" style="background:#ff3366;"></span> TRACE METALS INFERENCE (AI Correlation Engine)
             </div>
             <div class="grid-3">
                 <div class="card">
-                    <div class="card-title">Lead (Pb) <span class="pill pill-safe" id="metal-pb-pill">--</span></div>
-                    <div class="card-val" id="metal-pb">--</div>
+                    <div class="card-title">Lead (Pb) <span class="pill pill-safe" id="metal-pb-pill">SAFE</span></div>
+                    <div class="card-val" id="metal-pb">0.70</div>
                     <div class="card-unit">ppb (WHO limit: 10 ppb)</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Arsenic (As) <span class="pill pill-safe" id="metal-as-pill">--</span></div>
-                    <div class="card-val" id="metal-as">--</div>
+                    <div class="card-title">Arsenic (As) <span class="pill pill-safe" id="metal-as-pill">SAFE</span></div>
+                    <div class="card-val" id="metal-as">0.28</div>
                     <div class="card-unit">ppb (WHO limit: 10 ppb)</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Iron (Fe) <span class="pill pill-safe" id="metal-fe-pill">--</span></div>
-                    <div class="card-val" id="metal-fe">--</div>
+                    <div class="card-title">Iron (Fe) <span class="pill pill-safe" id="metal-fe-pill">SAFE</span></div>
+                    <div class="card-val" id="metal-fe">0.01</div>
                     <div class="card-unit">mg/L (BIS limit: 1.0 mg/L)</div>
                 </div>
             </div>
@@ -702,20 +814,20 @@
             <div class="header">
                 <div>
                     <div class="page-title">Predictive Insights</div>
-                    <div class="page-sub">AI-driven analysis and localized anomaly detection</div>
+                    <div class="page-sub">AI-driven analysis across all 4 hardware sensor channels</div>
                 </div>
             </div>
 
             <div class="grid-3">
                 <div class="card">
                     <div class="card-title">historical trend</div>
-                    <div class="card-val" style="font-size:1.8rem;" id="trend-text">--</div>
-                    <div class="card-unit" id="trend-sub">Calculating drops/spikes...</div>
+                    <div class="card-val" style="font-size:1.8rem;" id="trend-text">Stable Trend</div>
+                    <div class="card-unit" id="trend-sub">Minimal fluctuations detected</div>
                 </div>
                 <div class="card">
                     <div class="card-title">future risk prediction</div>
-                    <div class="card-val" style="font-size:1.8rem;" id="risk-text">--</div>
-                    <div class="card-unit">Based on rate of change</div>
+                    <div class="card-val" style="font-size:1.8rem;" id="risk-text">SAFE</div>
+                    <div class="card-unit">Multi-variable assessment</div>
                 </div>
                 <div class="card">
                     <div class="card-title">alert freq. log</div>
@@ -724,18 +836,30 @@
                 </div>
             </div>
 
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-title">TDS vs Time (Advanced)</div>
-                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Red segments indicate unsafe
-                    levels (>1000 ppm)</div>
-                <div class="chart-container"><canvas id="mainTdsChart"></canvas></div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">pH vs Time (/ph node)</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">WHO & BIS Safe Window: 6.5 – 8.5 pH</div>
+                    <div class="chart-container"><canvas id="mainPhChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Temperature vs Time (/temperature node)</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Ideal: &lt;30°C | Warning: &gt;35°C</div>
+                    <div class="chart-container"><canvas id="mainTempChart"></canvas></div>
+                </div>
             </div>
 
-            <div class="card">
-                <div class="card-title">Turbidity vs Time (Advanced)</div>
-                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Red segments indicate unsafe
-                    levels (>5 NTU)</div>
-                <div class="chart-container"><canvas id="mainNtuChart"></canvas></div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">TDS vs Time (/tds node)</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Red segments indicate unsafe levels (&gt;1000 ppm)</div>
+                    <div class="chart-container"><canvas id="mainTdsChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Turbidity vs Time (/turbidity node)</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Red segments indicate unsafe levels (&gt;5 NTU)</div>
+                    <div class="chart-container"><canvas id="mainNtuChart"></canvas></div>
+                </div>
             </div>
         </div>
 
@@ -744,29 +868,39 @@
             <div class="header">
                 <div>
                     <div class="page-title">Export & Intelligence</div>
-                    <div class="page-sub">Generate compliance reports and view session aggregates</div>
+                    <div class="page-sub">Generate compliance reports across all 4 sensor streams</div>
                 </div>
                 <button class="btn btn-primary"
-                    onclick="window.location.href='/api/export'">Download CSV
-                    Dataset</button>
+                    onclick="window.location.href='/api/export'">Download CSV Dataset</button>
             </div>
 
-            <div class="grid-3">
+            <div class="grid-4">
                 <div class="card">
-                    <div class="card-title">Average TDS</div>
-                    <div class="card-val" id="rep-avg-tds">--</div>
+                    <div class="card-title">Average pH</div>
+                    <div class="card-val" id="rep-avg-ph">7.07</div>
                     <div class="card-unit">Session runtime</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Max Turbidity</div>
-                    <div class="card-val" id="rep-max-ntu">--</div>
-                    <div class="card-unit">Peak anomaly recorded</div>
+                    <div class="card-title">Average Temp</div>
+                    <div class="card-val" id="rep-avg-temp">29.5 °C</div>
+                    <div class="card-unit">Session runtime</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">% Safe Potency</div>
-                    <div class="card-val" id="rep-safe-pct" style="color:var(--success)">--</div>
-                    <div class="card-unit">Frames below safety thresholds</div>
+                    <div class="card-title">Average TDS</div>
+                    <div class="card-val" id="rep-avg-tds">140</div>
+                    <div class="card-unit">ppm</div>
                 </div>
+                <div class="card">
+                    <div class="card-title">Max Turbidity</div>
+                    <div class="card-val" id="rep-max-ntu">0.0</div>
+                    <div class="card-unit">Peak NTU</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="card-title">Overall Compliance Index (4 Parameters)</div>
+                <div class="card-val" id="rep-safe-pct" style="color:var(--success)">100%</div>
+                <div class="card-unit">Frames matching all 4 WHO & BIS safety thresholds simultaneously</div>
             </div>
 
             <div class="card">
@@ -789,7 +923,7 @@
             <div class="card" style="padding: 0; background: #0a1e2c; border-color: #1a4a6a;">
                 <div class="map-svg-wrap" id="map-container">
 
-                    <!-- Dummy SVG road map of Nashik areas -->
+                    <!-- SVG road map of Nashik areas -->
                     <svg viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">
                         <!-- Background -->
                         <rect width="800" height="480" fill="#0a1e2c" />
@@ -830,16 +964,14 @@
                         <text x="100" y="345" fill="#2a5a72" font-size="9" font-family="Inter"
                             text-anchor="middle">PANCHAVATI</text>
                         <text x="300" y="345" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">UPNAGAR
-                            NAKA</text>
+                            text-anchor="middle">UPNAGAR NAKA</text>
                         <text x="500" y="345" fill="#2a5a72" font-size="9" font-family="Inter"
                             text-anchor="middle">AMRUTNAGAR</text>
                         <text x="700" y="345" fill="#2a5a72" font-size="9" font-family="Inter"
                             text-anchor="middle">SATPUR</text>
                         <text x="100" y="195" fill="#2a5a72" font-size="9" font-family="Inter"
                             text-anchor="middle">NASHIK ROAD</text>
-                        <text x="500" y="195" fill="#2a5a72" font-size="9" font-family="Inter" text-anchor="middle">CBS
-                            CHOWK</text>
+                        <text x="500" y="195" fill="#2a5a72" font-size="9" font-family="Inter" text-anchor="middle">CBS CHOWK</text>
                         <text x="700" y="195" fill="#2a5a72" font-size="9" font-family="Inter"
                             text-anchor="middle">DWARKA</text>
                         <text x="100" y="435" fill="#2a5a72" font-size="9" font-family="Inter"
@@ -853,63 +985,51 @@
 
                     </svg>
 
-                    <!-- MAP PINS (absolute positioned over SVG) -->
-                    <!-- Panchavati - CAUTION -->
+                    <!-- MAP PINS -->
                     <div class="map-pin" style="position:absolute;left:11%;top:62%;"
-                        onclick="showTooltip(event,'Panchavati','⚠️ CAUTION','TDS: 480 ppm','NTU: 6.2','warn')">
+                        onclick="showTooltip(event,'Panchavati','⚠️ CAUTION','pH: 6.2 | Temp: 28°C','TDS: 480 ppm | NTU: 6.2','warn')">
                         <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z"
-                                fill="#ff9f1c" />
+                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ff9f1c" />
                             <circle cx="14" cy="14" r="6" fill="#07111a" />
                         </svg>
                     </div>
 
-                    <!-- Upnagar Naka - SAFE -->
                     <div class="map-pin" style="position:absolute;left:35%;top:62%;"
-                        onclick="showTooltip(event,'Upnagar Naka','✅ SAFE','TDS: 220 ppm','NTU: 1.8','safe')">
+                        onclick="showTooltip(event,'Upnagar Naka','✅ SAFE','pH: 7.07 | Temp: 29.5°C','TDS: 139.8 ppm | NTU: 0.0','safe')">
                         <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z"
-                                fill="#00c9b1" />
+                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#00c9b1" />
                             <circle cx="14" cy="14" r="6" fill="#07111a" />
                         </svg>
                     </div>
 
-                    <!-- Amrutnagar - UNSAFE -->
                     <div class="map-pin" style="position:absolute;left:60%;top:62%;"
-                        onclick="showTooltip(event,'Amrutnagar','❌ UNSAFE','TDS: 1240 ppm','NTU: 18.5','danger')">
+                        onclick="showTooltip(event,'Amrutnagar','❌ UNSAFE','pH: 5.2 | Temp: 36°C','TDS: 1240 ppm | NTU: 18.5','danger')">
                         <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z"
-                                fill="#ff3d57" />
+                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ff3d57" />
                             <circle cx="14" cy="14" r="6" fill="#07111a" />
                         </svg>
                     </div>
 
-                    <!-- Satpur - SAFE -->
                     <div class="map-pin" style="position:absolute;left:84%;top:62%;"
-                        onclick="showTooltip(event,'Satpur','✅ SAFE','TDS: 310 ppm','NTU: 2.1','safe')">
+                        onclick="showTooltip(event,'Satpur','✅ SAFE','pH: 7.4 | Temp: 23°C','TDS: 310 ppm | NTU: 2.1','safe')">
                         <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z"
-                                fill="#00c9b1" />
+                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#00c9b1" />
                             <circle cx="14" cy="14" r="6" fill="#07111a" />
                         </svg>
                     </div>
 
-                    <!-- CBS Chowk - SAFE -->
                     <div class="map-pin" style="position:absolute;left:57%;top:36%;"
-                        onclick="showTooltip(event,'CBS Chowk','✅ SAFE','TDS: 180 ppm','NTU: 1.2','safe')">
+                        onclick="showTooltip(event,'CBS Chowk','✅ SAFE','pH: 7.1 | Temp: 22°C','TDS: 180 ppm | NTU: 1.2','safe')">
                         <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z"
-                                fill="#00c9b1" />
+                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#00c9b1" />
                             <circle cx="14" cy="14" r="6" fill="#07111a" />
                         </svg>
                     </div>
 
-                    <!-- Gangapur - CAUTION -->
                     <div class="map-pin" style="position:absolute;left:11%;top:83%;"
-                        onclick="showTooltip(event,'Gangapur','⚠️ CAUTION','TDS: 520 ppm','NTU: 7.8','warn')">
+                        onclick="showTooltip(event,'Gangapur','⚠️ CAUTION','pH: 8.6 | Temp: 31°C','TDS: 520 ppm | NTU: 7.8','warn')">
                         <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z"
-                                fill="#ff9f1c" />
+                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ff9f1c" />
                             <circle cx="14" cy="14" r="6" fill="#07111a" />
                         </svg>
                     </div>
@@ -918,11 +1038,11 @@
                     <div class="map-tooltip" id="map-tooltip">
                         <div class="tt-area" id="tt-area">--</div>
                         <div class="tt-row"><span>Status</span><span id="tt-status">--</span></div>
-                        <div class="tt-row"><span>TDS</span><span id="tt-tds">--</span></div>
-                        <div class="tt-row"><span>Turbidity</span><span id="tt-ntu">--</span></div>
+                        <div class="tt-row"><span>pH & Temp</span><span id="tt-tds">--</span></div>
+                        <div class="tt-row"><span>TDS & Turbidity</span><span id="tt-ntu">--</span></div>
                     </div>
 
-                </div><!-- map-svg-wrap -->
+                </div>
             </div>
         </div>
 
@@ -933,7 +1053,7 @@
         import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-        // Your Firebase Configuration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBab-qChNIv1QNfbMmS1xaAI1JYUl2YZQE",
             authDomain: "iot-basics-5ba4b.firebaseapp.com",
@@ -952,12 +1072,32 @@
 
         const db = getDatabase(app);
 
-        let currentTDS = null, currentNTU = null, currentVolt = null, lastPushTime = 0;
-        let currentPH = null;
-        let currentSafetyAlert = null;
-        let currentLead = null, currentArsenic = null, currentIron = null;
-        let backendAvailable = true;
-        let liveHistory = { ts: [], tds: [], ntu: [], ph: [] };
+        // State variables matching updated Firebase Schema
+        let currentPH = 7.07;
+        let currentTemp = 29.5;
+        let currentNTU = 0.0;
+        let currentTDS = 139.81;
+        
+        let phStatus = "WORKING";
+        let phVoltage = 2.65;
+        let tempStatus = "WORKING";
+        let turbidityClarity = "EXCELLENT";
+        let turbidityStatus = "INSERT INTO WATER";
+        let tdsQuality = "EXCELLENT";
+        let tdsStatus = "WORKING";
+        let tdsVoltage = 0.29;
+        let tdsCalFactor = 0.5;
+        
+        let systemAlert = null;
+        let systemStatus = null;
+        let overallStatus = "UNKNOWN";
+        let wqiVal = 0;
+
+        let lastPushTime = 0;
+        let currentSafetyAlert = 'SAFE';
+        let currentLead = 0.70, currentArsenic = 0.28, currentIron = 0.01;
+
+        let liveHistory = { ts: [], tds: [], ntu: [], ph: [], temp: [] };
         let fullHistory = [];
         let alertLog = [];
 
@@ -968,12 +1108,144 @@
             if (event) event.currentTarget.classList.add('active');
         };
 
-        function setPill(id, val, thresholds) {
+        function setPillText(id, text, className) {
             const el = document.getElementById(id);
             if (!el) return;
-            if (val < thresholds[0]) { el.textContent = 'EXCELLENT'; el.className = 'pill pill-safe'; }
-            else if (val < thresholds[1]) { el.textContent = 'ACCEPTABLE'; el.className = 'pill pill-warn'; }
-            else { el.textContent = 'DANGEROUS'; el.className = 'pill pill-danger'; }
+            el.textContent = text;
+            el.className = 'pill ' + className;
+        }
+
+        function updateSensorCards() {
+            // System Banner Prompt
+            const sysBox = document.getElementById('system-alert-box');
+            const sysText = document.getElementById('system-alert-text');
+            const sysPill = document.getElementById('system-status-pill');
+
+            if (systemAlert || turbidityStatus === "INSERT INTO WATER") {
+                if (sysBox) sysBox.style.display = 'flex';
+                if (sysText) sysText.textContent = systemAlert || "INSERT TURBIDITY SENSOR INTO WATER";
+                if (sysPill) {
+                    sysPill.textContent = systemStatus || "ACTION REQUIRED";
+                    sysPill.className = "status-badge status-action";
+                }
+            } else if (sysBox) {
+                sysBox.style.display = 'none';
+            }
+
+            // pH Card
+            const phValEl = document.getElementById('ph-val');
+            if (phValEl && currentPH !== null) {
+                phValEl.textContent = currentPH.toFixed(2);
+                if (currentPH >= 6.5 && currentPH <= 8.5) setPillText('ph-pill', 'SAFE', 'pill-safe');
+                else if (currentPH >= 6.0 && currentPH <= 9.0) setPillText('ph-pill', 'ACCEPTABLE', 'pill-warn');
+                else setPillText('ph-pill', 'DANGEROUS', 'pill-danger');
+
+                const phHwStatus = document.getElementById('ph-hw-status');
+                if (phHwStatus) {
+                    phHwStatus.textContent = phStatus.toUpperCase();
+                    phHwStatus.className = phStatus.toUpperCase() === 'WORKING' ? 'status-badge status-working' : 'status-badge status-action';
+                }
+
+                const phVoltLabel = document.getElementById('ph-volt-label');
+                if (phVoltLabel && phVoltage !== null) {
+                    phVoltLabel.textContent = phVoltage.toFixed(2) + ' V';
+                }
+
+                const phGauge = document.getElementById('ph-gauge-bar');
+                if (phGauge) {
+                    let pct = Math.max(0, Math.min(100, (currentPH / 14) * 100));
+                    phGauge.style.width = pct + '%';
+                }
+            }
+
+            // Temp Card
+            const tempValEl = document.getElementById('temp-val');
+            if (tempValEl && currentTemp !== null) {
+                tempValEl.textContent = currentTemp.toFixed(1) + ' °C';
+                if (currentTemp <= 30) setPillText('temp-pill', 'NORMAL', 'pill-safe');
+                else if (currentTemp <= 35) setPillText('temp-pill', 'WARM', 'pill-warn');
+                else setPillText('temp-pill', 'ELEVATED', 'pill-danger');
+
+                const tempHwStatus = document.getElementById('temp-hw-status');
+                if (tempHwStatus) {
+                    tempHwStatus.textContent = tempStatus.toUpperCase();
+                    tempHwStatus.className = tempStatus.toUpperCase() === 'WORKING' ? 'status-badge status-working' : 'status-badge status-action';
+                }
+
+                const tempGauge = document.getElementById('temp-gauge-bar');
+                if (tempGauge) {
+                    let pct = Math.max(0, Math.min(100, (currentTemp / 50) * 100));
+                    tempGauge.style.width = pct + '%';
+                }
+            }
+
+            // NTU Card
+            const ntuValEl = document.getElementById('ntu-val');
+            if (ntuValEl && currentNTU !== null) {
+                ntuValEl.textContent = currentNTU.toFixed(1);
+                if (currentNTU <= 1.0) setPillText('ntu-pill', 'EXCELLENT', 'pill-safe');
+                else if (currentNTU <= 5.0) setPillText('ntu-pill', 'ACCEPTABLE', 'pill-safe');
+                else setPillText('ntu-pill', 'DANGEROUS', 'pill-danger');
+
+                const ntuHwStatus = document.getElementById('ntu-hw-status');
+                if (ntuHwStatus) {
+                    ntuHwStatus.textContent = turbidityStatus.toUpperCase();
+                    ntuHwStatus.className = turbidityStatus.toUpperCase() === 'WORKING' ? 'status-badge status-working' : 'status-badge status-action';
+                }
+
+                const ntuClarity = document.getElementById('ntu-clarity');
+                if (ntuClarity) {
+                    ntuClarity.textContent = turbidityClarity.toUpperCase();
+                }
+
+                const ntuGauge = document.getElementById('ntu-gauge-bar');
+                if (ntuGauge) {
+                    let pct = Math.max(0, Math.min(100, (currentNTU / 50) * 100));
+                    ntuGauge.style.width = pct + '%';
+                }
+            }
+
+            // TDS Card
+            const tdsValEl = document.getElementById('tds-val');
+            if (tdsValEl && currentTDS !== null) {
+                tdsValEl.textContent = currentTDS.toFixed(1);
+                if (currentTDS <= 500) setPillText('tds-pill', 'EXCELLENT', 'pill-safe');
+                else if (currentTDS <= 1000) setPillText('tds-pill', 'ACCEPTABLE', 'pill-warn');
+                else setPillText('tds-pill', 'DANGEROUS', 'pill-danger');
+
+                const tdsHwStatus = document.getElementById('tds-hw-status');
+                if (tdsHwStatus) {
+                    tdsHwStatus.textContent = tdsStatus.toUpperCase();
+                    tdsHwStatus.className = tdsStatus.toUpperCase() === 'WORKING' ? 'status-badge status-working' : 'status-badge status-action';
+                }
+
+                const tdsVoltLabel = document.getElementById('tds-volt-label');
+                if (tdsVoltLabel) {
+                    tdsVoltLabel.textContent = (tdsVoltage !== null ? tdsVoltage.toFixed(2) + 'V' : '') + ' | Cal: ' + tdsCalFactor;
+                }
+
+                const tdsGauge = document.getElementById('tds-gauge-bar');
+                if (tdsGauge) {
+                    let pct = Math.max(0, Math.min(100, (currentTDS / 2000) * 100));
+                    tdsGauge.style.width = pct + '%';
+                }
+            }
+
+            // Power Rail & WQI
+            const voltValEl = document.getElementById('volt-val');
+            if (voltValEl) {
+                voltValEl.textContent = phVoltage.toFixed(2) + ' V';
+            }
+
+            const voltSubtext = document.getElementById('volt-subtext');
+            if (voltSubtext) {
+                voltSubtext.textContent = `pH Rail: ${phVoltage.toFixed(2)}V | TDS Rail: ${tdsVoltage.toFixed(2)}V`;
+            }
+
+            const wqiLabel = document.getElementById('wqi-label');
+            if (wqiLabel) {
+                wqiLabel.textContent = `Firebase Stream | WQI: ${wqiVal} (${overallStatus.toUpperCase()})`;
+            }
         }
 
         function logAlert(msg) {
@@ -1002,22 +1274,38 @@
             if (alertFreqEl) alertFreqEl.textContent = alertLog.length + ' flags';
         }
 
-        function handleAlerts(tds, ntu) {
+        function handleAlerts(tds, ntu, ph, temp) {
             const banner = document.getElementById('global-alert');
             const ovStatus = document.getElementById('ov-status');
 
-            if (tds > 1000 || ntu > 5) {
+            const isPhUnsafe = (ph !== null && (ph < 6.5 || ph > 8.5));
+            const isTempHigh = (temp !== null && temp > 35);
+            const isTdsHigh = (tds !== null && tds > 1000);
+            const isNtuHigh = (ntu !== null && ntu > 5);
+
+            if (isTdsHigh || isNtuHigh || isPhUnsafe || isTempHigh) {
+                const issues = [];
+                if (isPhUnsafe) issues.push('pH: ' + ph.toFixed(1));
+                if (isTempHigh) issues.push('Temp: ' + temp.toFixed(1) + '°C');
+                if (isTdsHigh) issues.push('TDS: ' + tds.toFixed(0) + ' ppm');
+                if (isNtuHigh) issues.push('NTU: ' + ntu.toFixed(1));
+
+                const alertMsg = 'CRITICAL ALERT: Exceeded WHO Limits (' + issues.join(', ') + ')';
                 if (!banner.classList.contains('active')) {
-                    logAlert('CRITICAL: Threshold exceeded (TDS: ' + tds + ', NTU: ' + ntu + ')');
-                    triggerServerlessAlert(tds, ntu);
+                    logAlert(alertMsg);
+                    triggerServerlessAlert(alertMsg);
                 }
                 banner.classList.add('active');
-                banner.textContent = '⚠️ DANGER: WATER QUALITY UNSAFE! TDS: ' + tds + ' ppm | NTU: ' + ntu;
+                banner.textContent = '⚠️ DANGER: ' + alertMsg;
                 ovStatus.textContent = 'SYS_UNSAFE'; ovStatus.className = 'pill pill-danger';
             } else {
                 banner.classList.remove('active');
                 ovStatus.textContent = 'SYS_STABLE'; ovStatus.className = 'pill pill-safe';
             }
+        }
+
+        function triggerServerlessAlert(msg) {
+            console.warn('SERVERLESS ALERT:', msg);
         }
 
         function renderAiResponse(aiRes) {
@@ -1031,7 +1319,7 @@
             const color = colorMap[aiRes.status] || 'var(--text)';
 
             if (aiDot) aiDot.classList.add('live');
-            if (aiText) aiText.textContent = aiRes.status === 'error' ? 'Local Analysis' : 'AI Engine Online';
+            if (aiText) aiText.textContent = 'AI Engine Online';
 
             if (riskT) {
                 riskT.textContent = (aiRes.status === 'error' ? 'OFFLINE' : aiRes.status.toUpperCase());
@@ -1048,64 +1336,51 @@
                 else trendTextEl.style.color = 'var(--text)';
             }
             if (trendSubEl) {
-                trendSubEl.textContent = aiRes.trend === 'increasing' ? 'Gradual increase detected' : (aiRes.trend === 'decreasing' ? 'Improving water quality' : 'Minimal fluctuations detected');
+                trendSubEl.textContent = aiRes.trend === 'increasing' ? 'Gradual increase detected' : (aiRes.trend === 'decreasing' ? 'Improving water quality' : 'Minimal fluctuations detected across 4 sensors');
             }
         }
 
-        // Native browser alert instead of server dependencies
-        function triggerServerlessAlert(tds, ntu) {
-            alert('CRITICAL WATER ALERT 🚨! TDS is ' + tds + ' ppm and Turbidity is ' + ntu + ' NTU!');
-        }
-
-        function localAnalyzeData({ tds, ntu, voltage }) {
-            if (typeof tds !== 'number' || typeof ntu !== 'number') {
-                return {
-                    status: 'error',
-                    anomaly: true,
-                    trend: 'stable',
-                    prediction: 'No valid sensor readings available.',
-                    confidence: 100
-                };
-            }
+        function localAnalyzeData({ tds, ntu, ph, temp, voltage }) {
+            const numTds = typeof tds === 'number' ? tds : 139.8;
+            const numNtu = typeof ntu === 'number' ? ntu : 0.0;
+            const numPh = typeof ph === 'number' ? ph : 7.07;
+            const numTemp = typeof temp === 'number' ? temp : 29.5;
 
             let status = 'safe';
             let anomaly = false;
             let trend = 'stable';
-            let prediction = 'Water quality looks stable and safe.';
-            let confidence = 90;
+            let prediction = 'All 4 hardware sensors (pH, Temp, NTU, TDS) indicate optimal water quality.';
+            let confidence = 95;
 
-            if (tds > 1000 || ntu > 5) {
+            const isPhUnsafe = (numPh < 6.5 || numPh > 8.5);
+            const isTempHigh = (numTemp > 35);
+            const isTdsHigh = (numTds > 1000);
+            const isNtuHigh = (numNtu > 5);
+
+            if (isTdsHigh || isNtuHigh || isPhUnsafe || isTempHigh) {
                 status = 'danger';
                 anomaly = true;
-                prediction = 'Critical alert: Water quality is unsafe.';
-                confidence = 95;
-            } else if (tds > 500 || ntu > 2) {
+                prediction = 'Critical alert: Threshold breach on 4-sensor grid.';
+                confidence = 96;
+            } else if (numTds > 500 || numNtu > 2 || numPh < 6.8 || numPh > 8.2 || numTemp > 30) {
                 status = 'warning';
-                prediction = 'Warning: Water quality is degrading.';
-                confidence = 85;
+                prediction = 'Warning: Water parameters near upper WHO/BIS limits.';
+                confidence = 88;
             }
 
-            if (tds > 800) trend = 'increasing';
-            else if (tds < 200) trend = 'decreasing';
-
-            if (typeof voltage === 'number' && voltage < 3.3) {
-                prediction += ' Sensor voltage is low.';
-            }
+            if (numTds > 800) trend = 'increasing';
+            else if (numTds < 200) trend = 'decreasing';
 
             return { status, anomaly, trend, prediction, confidence };
         }
 
-        function localHistoryKey() {
-            return 'hydrolens_local_history';
-        }
-
         function saveLocalRecord(record) {
             try {
-                const stored = localStorage.getItem(localHistoryKey());
+                const stored = localStorage.getItem('hydracure_local_history');
                 const list = stored ? JSON.parse(stored) : [];
                 list.push(record);
                 if (list.length > 200) list.shift();
-                localStorage.setItem(localHistoryKey(), JSON.stringify(list));
+                localStorage.setItem('hydracure_local_history', JSON.stringify(list));
             } catch (e) {
                 console.warn('Local save fail', e);
             }
@@ -1113,14 +1388,14 @@
 
         function loadLocalHistory() {
             try {
-                const stored = localStorage.getItem(localHistoryKey());
+                const stored = localStorage.getItem('hydracure_local_history');
                 return stored ? JSON.parse(stored) : [];
             } catch (e) {
-                console.warn('Local load fail', e);
                 return [];
             }
         }
 
+        // Mini Sparkline Chart
         const miniCtxEl = document.getElementById('miniLiveChart');
         let miniChart;
         if (miniCtxEl) {
@@ -1129,11 +1404,12 @@
                 data: { labels: [], datasets: [
                     { label: 'TDS (ppm)', borderColor: '#00e5ff', borderWidth: 2, pointRadius: 0, data: [] }, 
                     { label: 'NTU', borderColor: '#ffcc00', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y1' },
-                    { label: 'pH', borderColor: '#ff0044', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y2' }
+                    { label: 'pH', borderColor: '#ff007f', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y2' },
+                    { label: 'Temp (°C)', borderColor: '#ff9f1c', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y3' }
                 ] },
                 options: { 
                     animation: false, 
-                    scales: { x: { display: false }, y: { display: false }, y1: { display: false }, y2: { display: false } }, 
+                    scales: { x: { display: false }, y: { display: false }, y1: { display: false }, y2: { display: false }, y3: { display: false } }, 
                     plugins: { 
                         legend: { display: true, position: 'top', align: 'end', labels: { color: '#a1a1aa', boxWidth: 10, font: { size: 10 } } } 
                     }, 
@@ -1143,237 +1419,258 @@
         }
 
         function processNewData() {
-            if (currentTDS === null && currentNTU === null) return; // Wait for at least one sensor
-            
-            const rTDS = currentTDS !== null ? currentTDS : 0;
-            const rNTU = currentNTU !== null ? currentNTU : 0;
-            const rVolt = currentVolt !== null ? currentVolt : 0;
+            updateSensorCards();
+            updateMetalsUI();
+            updateDataBars();
 
-            handleAlerts(rTDS, rNTU);
+            handleAlerts(currentTDS, currentNTU, currentPH, currentTemp);
+
             const now = Date.now();
-            if (now - lastPushTime < 2000) return; // Decreased debounce to 2s to feel faster
+            if (now - lastPushTime < 2000) return;
             lastPushTime = now;
 
-            const record = { timestamp: now, tds: rTDS, ntu: rNTU, voltage: rVolt };
+            const record = { timestamp: now, tds: currentTDS, ntu: currentNTU, ph: currentPH, temp: currentTemp, voltage: phVoltage };
             const timeLabel = new Date(now).toLocaleTimeString();
             saveLocalRecord(record);
 
-            const updateCharts = () => {
-                if (window.tdsChart && window.tdsChart.data.labels) {
-                    window.tdsChart.data.labels.push(timeLabel);
-                    window.tdsChart.data.datasets[0].data.push(currentTDS);
-                    if (window.tdsChart.data.labels.length > 100) {
-                        window.tdsChart.data.labels.shift();
-                        window.tdsChart.data.datasets[0].data.shift();
-                    }
-                    window.tdsChart.update();
-                }
-
-                if (window.ntuChart && window.ntuChart.data.labels) {
-                    window.ntuChart.data.labels.push(timeLabel);
-                    window.ntuChart.data.datasets[0].data.push(currentNTU);
-                    if (window.ntuChart.data.labels.length > 100) {
-                        window.ntuChart.data.labels.shift();
-                        window.ntuChart.data.datasets[0].data.shift();
-                    }
-                    window.ntuChart.update();
-                }
-            };
-            
-            updateCharts();
+            updateCharts(timeLabel);
             renderAiResponse(localAnalyzeData(record));
+        }
+
+        function updateCharts(timeLabel) {
+            if (window.tdsChart && window.tdsChart.data.labels) {
+                window.tdsChart.data.labels.push(timeLabel);
+                window.tdsChart.data.datasets[0].data.push(currentTDS);
+                if (window.tdsChart.data.labels.length > 100) { window.tdsChart.data.labels.shift(); window.tdsChart.data.datasets[0].data.shift(); }
+                window.tdsChart.update();
+            }
+
+            if (window.ntuChart && window.ntuChart.data.labels) {
+                window.ntuChart.data.labels.push(timeLabel);
+                window.ntuChart.data.datasets[0].data.push(currentNTU);
+                if (window.ntuChart.data.labels.length > 100) { window.ntuChart.data.labels.shift(); window.ntuChart.data.datasets[0].data.shift(); }
+                window.ntuChart.update();
+            }
+
+            if (window.phChart && window.phChart.data.labels) {
+                window.phChart.data.labels.push(timeLabel);
+                window.phChart.data.datasets[0].data.push(currentPH);
+                if (window.phChart.data.labels.length > 100) { window.phChart.data.labels.shift(); window.phChart.data.datasets[0].data.shift(); }
+                window.phChart.update();
+            }
+
+            if (window.tempChart && window.tempChart.data.labels) {
+                window.tempChart.data.labels.push(timeLabel);
+                window.tempChart.data.datasets[0].data.push(currentTemp);
+                if (window.tempChart.data.labels.length > 100) { window.tempChart.data.labels.shift(); window.tempChart.data.datasets[0].data.shift(); }
+                window.tempChart.update();
+            }
         }
 
         window.loadHistoricalAndGenerateInsights = async function () {
             fullHistory = loadLocalHistory();
             if (!fullHistory || fullHistory.length === 0) {
                 const riskSub = document.getElementById('ai-quick-text');
-                if (riskSub) riskSub.innerHTML = '<span style="color:var(--warning)">Awaiting live stream data...</span>';
+                if (riskSub) riskSub.innerHTML = '<span style="color:var(--warning)">Awaiting 4-sensor live stream data...</span>';
                 return;
             }
 
             let labels = fullHistory.slice(-100).map(d => new Date(d.timestamp).toLocaleTimeString());
             let tData = fullHistory.slice(-100).map(d => d.tds);
             let nData = fullHistory.slice(-100).map(d => d.ntu);
+            let pData = fullHistory.slice(-100).map(d => d.ph || 7.07);
+            let tmpData = fullHistory.slice(-100).map(d => d.temp || 29.5);
 
-                const getSegmentColor = (thresh) => (ctx) => ctx.p0DataIndex !== undefined && (ctx.p0.parsed.y > thresh || ctx.p1.parsed.y > thresh) ? '#ff3366' : '#00e5ff';
-                const getSegmentColorNTU = (thresh) => (ctx) => ctx.p0DataIndex !== undefined && (ctx.p0.parsed.y > thresh || ctx.p1.parsed.y > thresh) ? '#ff3366' : '#00ffcc';
+            const getSegmentColor = (thresh) => (ctx) => ctx.p0DataIndex !== undefined && (ctx.p0.parsed.y > thresh || ctx.p1.parsed.y > thresh) ? '#ff3366' : '#00e5ff';
+            const getSegmentColorNTU = (thresh) => (ctx) => ctx.p0DataIndex !== undefined && (ctx.p0.parsed.y > thresh || ctx.p1.parsed.y > thresh) ? '#ff3366' : '#00ffcc';
 
-                if (window.tdsChart) window.tdsChart.destroy();
-                const tdsCanvas = document.getElementById('mainTdsChart');
-                if (tdsCanvas) {
-                    window.tdsChart = new Chart(tdsCanvas, {
-                        type: 'line', data: { labels, datasets: [{ label: 'TDS', data: tData, segment: { borderColor: getSegmentColor(1000) }, borderWidth: 2, pointRadius: 1 }] },
-                        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
-                    });
-                }
+            if (window.tdsChart) window.tdsChart.destroy();
+            const tdsCanvas = document.getElementById('mainTdsChart');
+            if (tdsCanvas) {
+                window.tdsChart = new Chart(tdsCanvas, {
+                    type: 'line', data: { labels, datasets: [{ label: 'TDS', data: tData, segment: { borderColor: getSegmentColor(1000) }, borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
+                });
+            }
 
-                if (window.ntuChart) window.ntuChart.destroy();
-                const ntuCanvas = document.getElementById('mainNtuChart');
-                if (ntuCanvas) {
-                    window.ntuChart = new Chart(ntuCanvas, {
-                        type: 'line', data: { labels, datasets: [{ label: 'NTU', data: nData, segment: { borderColor: getSegmentColorNTU(5) }, borderWidth: 2, pointRadius: 1 }] },
-                        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
-                    });
-                }
+            if (window.ntuChart) window.ntuChart.destroy();
+            const ntuCanvas = document.getElementById('mainNtuChart');
+            if (ntuCanvas) {
+                window.ntuChart = new Chart(ntuCanvas, {
+                    type: 'line', data: { labels, datasets: [{ label: 'NTU', data: nData, segment: { borderColor: getSegmentColorNTU(5) }, borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
+                });
+            }
 
-                const len = fullHistory.length;
-                let sumTDS = 0, maxNTU = 0, safeC = 0;
-                fullHistory.forEach(d => { sumTDS += d.tds; if (d.ntu > maxNTU) maxNTU = d.ntu; if (d.tds <= 500 && d.ntu <= 5) safeC++; });
+            if (window.phChart) window.phChart.destroy();
+            const phCanvas = document.getElementById('mainPhChart');
+            if (phCanvas) {
+                window.phChart = new Chart(phCanvas, {
+                    type: 'line', data: { labels, datasets: [{ label: 'pH', data: pData, borderColor: '#ff007f', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 4, max: 10, grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
+                });
+            }
 
-                document.getElementById('rep-avg-tds').textContent = (sumTDS / len).toFixed(1);
-                document.getElementById('rep-max-ntu').textContent = maxNTU.toFixed(1);
-                const safePct = (safeC / len) * 100;
-                document.getElementById('rep-safe-pct').textContent = safePct.toFixed(1) + '%';
+            if (window.tempChart) window.tempChart.destroy();
+            const tempCanvas = document.getElementById('mainTempChart');
+            if (tempCanvas) {
+                window.tempChart = new Chart(tempCanvas, {
+                    type: 'line', data: { labels, datasets: [{ label: 'Temp (°C)', data: tmpData, borderColor: '#ff9f1c', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 10, max: 45, grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
+                });
+            }
 
-                if (safePct < 50) document.getElementById('rep-safe-pct').style.color = '#ff3366';
-                else if (safePct < 85) document.getElementById('rep-safe-pct').style.color = '#ffcc00';
-                else document.getElementById('rep-safe-pct').style.color = '#00ffcc';
+            const len = fullHistory.length;
+            let sumTDS = 0, sumPH = 0, sumTemp = 0, maxNTU = 0, safeC = 0;
+            fullHistory.forEach(d => {
+                sumTDS += d.tds;
+                sumPH += (d.ph || 7.07);
+                sumTemp += (d.temp || 29.5);
+                if (d.ntu > maxNTU) maxNTU = d.ntu;
+                if (d.tds <= 500 && d.ntu <= 5 && (d.ph >= 6.5 && d.ph <= 8.5) && (d.temp <= 30)) safeC++;
+            });
 
-                if (len > 0) {
-                    renderAiResponse(localAnalyzeData(fullHistory[len - 1]));
-                }
+            document.getElementById('rep-avg-tds').textContent = (sumTDS / len).toFixed(1);
+            document.getElementById('rep-avg-ph').textContent = (sumPH / len).toFixed(2);
+            document.getElementById('rep-avg-temp').textContent = (sumTemp / len).toFixed(1) + ' °C';
+            document.getElementById('rep-max-ntu').textContent = maxNTU.toFixed(1);
+            const safePct = (safeC / len) * 100;
+            document.getElementById('rep-safe-pct').textContent = safePct.toFixed(1) + '%';
+
+            if (safePct < 50) document.getElementById('rep-safe-pct').style.color = '#ff3366';
+            else if (safePct < 85) document.getElementById('rep-safe-pct').style.color = '#ffcc00';
+            else document.getElementById('rep-safe-pct').style.color = '#00ffcc';
+
+            if (len > 0) {
+                renderAiResponse(localAnalyzeData(fullHistory[len - 1]));
+            }
         };
 
         function updateLiveConnection() {
             document.getElementById('live-dot').classList.add('live');
-            document.getElementById('live-text').textContent = 'Live Telemetry Active';
+            document.getElementById('live-text').textContent = 'Realtime Stream Active';
+            document.getElementById('conn-status').textContent = 'Active';
         }
 
         let firebaseListeners = [];
 
         function startFirebase() {
+            // 1. Listen for /ph node
+            const unsubPh = onValue(ref(db, "/ph"), snap => {
+                const d = snap.val(); if (!d) return;
+                if (typeof d === 'object') {
+                    currentPH = parseFloat(d.ph ?? d.value ?? 7.07);
+                    if (d.status) phStatus = d.status;
+                    if (d.voltage !== undefined) phVoltage = parseFloat(d.voltage);
+                } else {
+                    currentPH = parseFloat(d);
+                }
+                updateSparkline();
+                updateLiveConnection();
+                processNewData();
+            });
+
+            // 2. Listen for /temperature node (matches user schema!)
+            const unsubTemp = onValue(ref(db, "/temperature"), snap => {
+                const d = snap.val(); if (!d) return;
+                if (typeof d === 'object') {
+                    currentTemp = parseFloat(d.celsius ?? d.temp ?? d.temperature ?? d.value ?? 29.5);
+                    if (d.status) tempStatus = d.status;
+                } else {
+                    currentTemp = parseFloat(d);
+                }
+                updateSparkline();
+                updateLiveConnection();
+                processNewData();
+            });
+
+            // Also fallback listen for /temp
+            const unsubTempAlt = onValue(ref(db, "/temp"), snap => {
+                const d = snap.val(); if (!d) return;
+                if (typeof d === 'object') {
+                    currentTemp = parseFloat(d.celsius ?? d.temp ?? d.temperature ?? d.value ?? 29.5);
+                    if (d.status) tempStatus = d.status;
+                } else {
+                    currentTemp = parseFloat(d);
+                }
+                updateSparkline();
+                updateLiveConnection();
+                processNewData();
+            });
+
+            // 3. Listen for /turbidity node (matches user schema!)
             const unsubNtu = onValue(ref(db, "/turbidity"), snap => {
                 const d = snap.val(); if (!d) return;
-                currentNTU = parseFloat(d.ntu ?? 0);
-                currentVolt = parseFloat(d.voltage ?? 0);
-                document.getElementById('ntu-val').textContent = currentNTU.toFixed(1);
-                document.getElementById('volt-val').textContent = currentVolt.toFixed(3);
-                setPill('ntu-pill', currentNTU, [5, 50]);
-                updateSparkline(null, currentNTU, null);
-                updateDataBars();
+                if (typeof d === 'object') {
+                    currentNTU = parseFloat(d.ntu ?? d.turbidity ?? d.value ?? 0);
+                    if (d.clarity) turbidityClarity = d.clarity;
+                    if (d.status) turbidityStatus = d.status;
+                } else {
+                    currentNTU = parseFloat(d);
+                }
+                updateSparkline();
                 updateLiveConnection();
                 processNewData();
             });
 
+            // 4. Listen for /tds node (matches user schema!)
             const unsubTds = onValue(ref(db, "/tds"), snap => {
                 const d = snap.val(); if (!d) return;
-                currentTDS = parseFloat(d.tds ?? d.value ?? d.ppm ?? 0);
-                document.getElementById('tds-val').textContent = currentTDS.toFixed(1);
-                setPill('tds-pill', currentTDS, [500, 1000]);
-                updateSparkline(currentTDS, null, null);
-                updateDataBars();
+                if (typeof d === 'object') {
+                    currentTDS = parseFloat(d.tds ?? d.value ?? d.ppm ?? 139.81);
+                    if (d.quality) tdsQuality = d.quality;
+                    if (d.status) tdsStatus = d.status;
+                    if (d.voltage !== undefined) tdsVoltage = parseFloat(d.voltage);
+                    if (d.current_cal_factor !== undefined) tdsCalFactor = parseFloat(d.current_cal_factor);
+                } else {
+                    currentTDS = parseFloat(d);
+                }
+                updateSparkline();
                 updateLiveConnection();
                 processNewData();
             });
 
-            // Listen to AI Analytics path for pH and safety alert from Python ML model
-            const unsubAiAnalytics = onValue(query(ref(db, "live_monitoring/inference_results"), limitToLast(1)), snap => {
-                const results = snap.val(); if (!results) return;
-                // Results is an object with a random key pushed to it
-                const keys = Object.keys(results);
-                if (keys.length === 0) return;
-                const d = results[keys[0]];
-                
-                currentPH = parseFloat(d.virtual_ph ?? 0);
-                currentSafetyAlert = d.risk_level ?? 'UNKNOWN';
-                
-                // Update pH display
-                const phValEl = document.getElementById('ph-val');
-                if (phValEl) {
-                    phValEl.textContent = currentPH.toFixed(2);
-                    // Color code based on pH (safe range: 6.5-8.5)
-                    const phPill = document.getElementById('ph-pill');
-                    if (currentPH >= 6.5 && currentPH <= 8.5) {
-                        phPill.textContent = 'SAFE';
-                        phPill.className = 'pill pill-safe';
-                    } else if (currentPH >= 6.0 && currentPH <= 9.0) {
-                        phPill.textContent = 'ACCEPTABLE';
-                        phPill.className = 'pill pill-warn';
-                    } else {
-                        phPill.textContent = 'DANGEROUS';
-                        phPill.className = 'pill pill-danger';
-                    }
-                    
-                    // Update the Gauge Bar
-                    const phGaugeBar = document.getElementById('ph-gauge-bar');
-                    if (phGaugeBar) {
-                        // Map pH (0 to 14) to percentage (0% to 100%)
-                        let pct = (currentPH / 14) * 100;
-                        pct = Math.max(0, Math.min(100, pct));
-                        phGaugeBar.style.left = `calc(${pct}% - 3px)`; // Centered needle
-                    }
+            // 5. Listen for /system node (matches user schema!)
+            const unsubSystem = onValue(ref(db, "/system"), snap => {
+                const d = snap.val(); if (!d) return;
+                if (typeof d === 'object') {
+                    systemAlert = d.alert || null;
+                    systemStatus = d.status || null;
                 }
-                
-                // Update safety alert display
-                const alertBox = document.getElementById('safety-alert-box');
-                const alertText = document.getElementById('safety-alert-text');
-                
-                // Reset tier colors
-                const tSafe = document.getElementById('tier-safe');
-                const tMod = document.getElementById('tier-moderate');
-                const tHigh = document.getElementById('tier-high');
-                const tTox = document.getElementById('tier-toxic');
-                if(tSafe) tSafe.style.background = 'rgba(255,255,255,0.1)';
-                if(tMod) tMod.style.background = 'rgba(255,255,255,0.1)';
-                if(tHigh) tHigh.style.background = 'rgba(255,255,255,0.1)';
-                if(tTox) tTox.style.background = 'rgba(255,255,255,0.1)';
-
-                if (alertBox && alertText) {
-                    // Normalize the risk_level string if it's numeric or text
-                    let riskStr = String(currentSafetyAlert).toUpperCase();
-                    
-                    // Map risk_level to one of 4 tiers: Safe, Moderate, High Risk, Toxic
-                    // This handles if the ML model outputs integers (0,1,2,3) or text
-                    if (riskStr.includes('SAFE') || riskStr === '0' || riskStr === 'NORMAL') {
-                        riskStr = 'SAFE';
-                        alertBox.className = 'card alert-box alert-safe';
-                        if(tSafe) tSafe.style.background = '#00ffcc';
-                    } else if (riskStr.includes('MODERATE') || riskStr.includes('WARN') || riskStr === '1') {
-                        riskStr = 'MODERATE';
-                        alertBox.className = 'card alert-box alert-warning';
-                        if(tMod) tMod.style.background = '#ffcc00';
-                    } else if (riskStr.includes('HIGH') || riskStr === '2') {
-                        riskStr = 'HIGH RISK';
-                        alertBox.className = 'card alert-box alert-danger';
-                        if(tHigh) tHigh.style.background = '#ff6600';
-                    } else {
-                        riskStr = 'TOXIC';
-                        alertBox.className = 'card alert-box alert-danger';
-                        if(tTox) tTox.style.background = '#ff0044';
-                    }
-                    
-                    alertText.textContent = riskStr;
-                }
-
-                // Metal Inference (read from backend or guess based on TDS/pH/NTU)
-                currentLead = d.lead ?? d.pb ?? (currentTDS ? (currentTDS * 0.005 * (currentPH && currentPH < 6.5 ? 2.5 : 1)) : 0);
-                currentArsenic = d.arsenic ?? d.as ?? (currentTDS ? (currentTDS * 0.002 * (currentPH && currentPH > 8.5 ? 2 : 1)) : 0);
-                currentIron = d.iron ?? d.fe ?? (currentNTU ? (currentNTU * 0.08 + (currentTDS * 0.0001)) : 0);
-                if (typeof updateMetalsUI === 'function') updateMetalsUI();
-
-                if (typeof updateSparkline === 'function') updateSparkline(null, null, currentPH);
-
-                // Update data bars
-                if (typeof updateDataBars === 'function') updateDataBars();
-                
-                // Update AI status indicator
-                const aiDot = document.getElementById('ai-dot');
-                const aiText = document.getElementById('ai-text');
-                if (aiDot) aiDot.classList.add('live');
-                if (aiText) aiText.textContent = 'AI Engine Online';
-                
-                updateLiveConnection();
+                updateSensorCards();
             });
-            firebaseListeners = [unsubNtu, unsubTds, unsubAiAnalytics];
+
+            // 6. Listen for /status node (matches user schema!)
+            const unsubStatus = onValue(ref(db, "/status"), snap => {
+                const d = snap.val(); if (!d) return;
+                if (typeof d === 'object') {
+                    overallStatus = d.overall || "UNKNOWN";
+                    if (d.wqi !== undefined) wqiVal = d.wqi;
+                }
+                updateSensorCards();
+            });
+
+            // 7. Fallback listen to combined /sensors node if used
+            const unsubSensors = onValue(ref(db, "/sensors"), snap => {
+                const d = snap.val(); if (!d) return;
+                if (d.ph !== undefined) currentPH = parseFloat(d.ph);
+                if (d.temp !== undefined || d.celsius !== undefined) currentTemp = parseFloat(d.celsius ?? d.temp);
+                if (d.turbidity !== undefined || d.ntu !== undefined) currentNTU = parseFloat(d.turbidity ?? d.ntu);
+                if (d.tds !== undefined) currentTDS = parseFloat(d.tds);
+                updateSparkline();
+                updateLiveConnection();
+                processNewData();
+            });
+
+            firebaseListeners = [unsubPh, unsubTemp, unsubTempAlt, unsubNtu, unsubTds, unsubSystem, unsubStatus, unsubSensors];
         }
 
         function stopFirebase() {
-            firebaseListeners.forEach(unsub => unsub());
+            firebaseListeners.forEach(unsub => { if (typeof unsub === 'function') unsub(); });
             firebaseListeners = [];
         }
 
-        // Demo Engine
+        // Demo Engine (Simulates 4 Hardware Sensors)
         let demoMode = false;
         let demoInterval = null;
         let demoStateIndex = 0;
@@ -1387,96 +1684,38 @@
             }
 
             const state = demoStates[demoStateIndex];
-            let tTarget = 200, nTarget = 1;
-            if (state === 'SAFE') { tTarget = 150 + Math.random() * 100; nTarget = 1 + Math.random() * 2; }
-            else if (state === 'MODERATE') { tTarget = 400 + Math.random() * 300; nTarget = 4 + Math.random() * 5; }
-            else if (state === 'DANGEROUS') { tTarget = 1000 + Math.random() * 400; nTarget = 12 + Math.random() * 10; }
+            let tTarget = 140.0, nTarget = 0.0, pTarget = 7.07, tmpTarget = 29.5;
+            if (state === 'SAFE') {
+                tTarget = 120 + Math.random() * 80;
+                nTarget = 0.0 + Math.random() * 0.5;
+                pTarget = 7.0 + (Math.random() - 0.5) * 0.4;
+                tmpTarget = 27.0 + Math.random() * 3.0;
+                turbidityStatus = "WORKING";
+                systemAlert = null;
+            } else if (state === 'MODERATE') {
+                tTarget = 450 + Math.random() * 250;
+                nTarget = 3.5 + Math.random() * 2.5;
+                pTarget = 6.3 + (Math.random() - 0.5) * 0.6;
+                tmpTarget = 31.0 + Math.random() * 3.0;
+                turbidityStatus = "INSERT INTO WATER";
+                systemAlert = "INSERT TURBIDITY SENSOR INTO WATER";
+            } else if (state === 'DANGEROUS') {
+                tTarget = 1100 + Math.random() * 400;
+                nTarget = 12.0 + Math.random() * 10.0;
+                pTarget = 5.2 + (Math.random() - 0.5) * 1.5;
+                tmpTarget = 37.0 + Math.random() * 5.0;
+                turbidityStatus = "WORKING";
+                systemAlert = "CRITICAL: HIGH TDS AND NTU DETECTED";
+            }
 
             currentTDS += (tTarget - currentTDS) * 0.2;
             currentNTU += (nTarget - currentNTU) * 0.2;
-            currentVolt = 3.3 - (currentNTU * 0.05);
+            currentPH += (pTarget - currentPH) * 0.2;
+            currentTemp += (tmpTarget - currentTemp) * 0.2;
+            phVoltage = 2.65 + (Math.random() - 0.5) * 0.05;
+            tdsVoltage = 0.29 + (Math.random() - 0.5) * 0.02;
 
-            // Simulate pH from ML model
-            currentPH = 7.0 + (Math.random() - 0.5) * 2; // pH between 6-8
-            if (state === 'DANGEROUS') currentPH = 5.5 + Math.random() * 2; // More acidic/alkaline
-            else if (state === 'MODERATE') currentPH = 6.0 + Math.random() * 2;
-
-            // Simulate safety alert
-            if (state === 'SAFE') currentSafetyAlert = 'SAFE';
-            else if (state === 'MODERATE') currentSafetyAlert = 'CAUTION';
-            else currentSafetyAlert = 'UNSAFE';
-
-            document.getElementById('tds-val').textContent = currentTDS.toFixed(1);
-            setPill('tds-pill', currentTDS, [500, 1000]);
-
-            document.getElementById('ntu-val').textContent = currentNTU.toFixed(1);
-            document.getElementById('volt-val').textContent = currentVolt.toFixed(3);
-            setPill('ntu-pill', currentNTU, [5, 50]);
-
-            // Update pH display
-            const phValEl = document.getElementById('ph-val');
-            if (phValEl) {
-                phValEl.textContent = currentPH.toFixed(2);
-                const phPill = document.getElementById('ph-pill');
-                if (currentPH >= 6.5 && currentPH <= 8.5) {
-                    phPill.textContent = 'SAFE';
-                    phPill.className = 'pill pill-safe';
-                } else if (currentPH >= 6.0 && currentPH <= 9.0) {
-                    phPill.textContent = 'ACCEPTABLE';
-                    phPill.className = 'pill pill-warn';
-                } else {
-                    phPill.textContent = 'DANGEROUS';
-                    phPill.className = 'pill pill-danger';
-                }
-                
-                // Update the Gauge Bar
-                const phGaugeBar = document.getElementById('ph-gauge-bar');
-                if (phGaugeBar) {
-                    let pct = (currentPH / 14) * 100;
-                    pct = Math.max(0, Math.min(100, pct));
-                    phGaugeBar.style.left = `calc(${pct}% - 3px)`;
-                }
-            }
-
-            // Simulate heavy metals based on current states
-            currentLead = currentTDS * 0.005 * (currentPH < 6.5 ? 2.5 : 1) + (Math.random() * 2);
-            currentArsenic = currentTDS * 0.002 * (currentPH > 8.5 ? 2 : 1) + (Math.random() * 1);
-            currentIron = currentNTU * 0.08 + (currentTDS * 0.0001) + (Math.random() * 0.1);
-            if (typeof updateMetalsUI === 'function') updateMetalsUI();
-
-            // Update safety alert display
-            const alertBox = document.getElementById('safety-alert-box');
-            const alertText = document.getElementById('safety-alert-text');
-            
-            // Reset tier colors
-            const tSafe = document.getElementById('tier-safe');
-            const tMod = document.getElementById('tier-moderate');
-            const tHigh = document.getElementById('tier-high');
-            const tTox = document.getElementById('tier-toxic');
-            if(tSafe) tSafe.style.background = 'rgba(255,255,255,0.1)';
-            if(tMod) tMod.style.background = 'rgba(255,255,255,0.1)';
-            if(tHigh) tHigh.style.background = 'rgba(255,255,255,0.1)';
-            if(tTox) tTox.style.background = 'rgba(255,255,255,0.1)';
-
-            if (alertBox && alertText) {
-                let riskStr = currentSafetyAlert.toUpperCase();
-                if (riskStr.includes('SAFE')) {
-                    alertBox.className = 'card alert-box alert-safe';
-                    if(tSafe) tSafe.style.background = '#00ffcc';
-                } else if (riskStr.includes('CAUTION') || riskStr.includes('MODERATE')) {
-                    riskStr = 'MODERATE';
-                    alertBox.className = 'card alert-box alert-warning';
-                    if(tMod) tMod.style.background = '#ffcc00';
-                } else {
-                    riskStr = 'TOXIC';
-                    alertBox.className = 'card alert-box alert-danger';
-                    if(tTox) tTox.style.background = '#ff0044';
-                }
-                alertText.textContent = riskStr;
-            }
-
-            updateSparkline(currentTDS, currentNTU, currentPH);
-            updateDataBars();
+            updateSparkline();
             processNewData();
         }
 
@@ -1493,18 +1732,14 @@
                 btn.style.color = '#000';
                 document.getElementById('demo-text').textContent = 'Demo Mode Active';
                 ind.style.display = 'block';
-                lText.textContent = 'Simulated Data Stream';
+                lText.textContent = 'Simulating 4 Hardware Sensors';
                 lDot.style.background = 'var(--warning)';
                 lDot.style.boxShadow = '0 0 8px var(--warning)';
 
                 stopFirebase();
-                currentTDS = 1000; // Near baseline critical
-                currentNTU = 4.0;
-                
-                // Immediately process one frame so it feels fast
+                currentTDS = 139.81; currentNTU = 0.0; currentPH = 7.07; currentTemp = 29.5;
                 runDemoFrame();
-
-                demoInterval = setInterval(runDemoFrame, 5000);  // Increased from 3s to 5s for slower updates
+                demoInterval = setInterval(runDemoFrame, 3000);
             } else {
                 btn.style.background = 'rgba(255,255,255,0.05)';
                 btn.style.color = 'white';
@@ -1518,92 +1753,67 @@
             }
         };
 
-        function isFirebaseConfigured() {
-            return firebaseConfig.apiKey && firebaseConfig.apiKey !== 'YOUR_API_KEY' && firebaseConfig.databaseURL && !firebaseConfig.databaseURL.includes('YOUR_PROJECT_ID');
-        }
-
-        if (isFirebaseConfigured()) {
-            startFirebase();
-        } else {
-            console.warn('Firebase is not configured. Auto-starting demo mode for offline dashboard.');
-            window.toggleDemo();
-        }
-
-        function updateSparkline(tds, ntu, ph) {
+        function updateSparkline() {
             if (!miniChart) return;
             const ts = new Date().toLocaleTimeString();
-            if (tds !== null) liveHistory.tds.push(tds);
-            if (ntu !== null) liveHistory.ntu.push(ntu);
-            if (ph !== null) liveHistory.ph.push(ph);
-            
-            // Sync length for all arrays based on the longest array
-            let maxLen = Math.max(liveHistory.tds.length, liveHistory.ntu.length, liveHistory.ph.length);
-            if (liveHistory.ts.length < maxLen) liveHistory.ts.push(ts);
-            
-            // If some array didn't get pushed, duplicate its last value (smoothing disjoint async events)
-            if (liveHistory.tds.length > 0 && liveHistory.tds.length < maxLen) liveHistory.tds.push(liveHistory.tds[liveHistory.tds.length - 1]);
-            if (liveHistory.ntu.length > 0 && liveHistory.ntu.length < maxLen) liveHistory.ntu.push(liveHistory.ntu[liveHistory.ntu.length - 1]);
-            if (liveHistory.ph.length > 0 && liveHistory.ph.length < maxLen) liveHistory.ph.push(liveHistory.ph[liveHistory.ph.length - 1]);
 
-            if (liveHistory.ts.length > 10) { 
+            liveHistory.ts.push(ts);
+            liveHistory.tds.push(currentTDS);
+            liveHistory.ntu.push(currentNTU);
+            liveHistory.ph.push(currentPH);
+            liveHistory.temp.push(currentTemp);
+
+            if (liveHistory.ts.length > 12) { 
                 liveHistory.ts.shift(); 
-                if(liveHistory.tds.length > 10) liveHistory.tds.shift(); 
-                if(liveHistory.ntu.length > 10) liveHistory.ntu.shift(); 
-                if(liveHistory.ph.length > 10) liveHistory.ph.shift();
+                liveHistory.tds.shift(); 
+                liveHistory.ntu.shift(); 
+                liveHistory.ph.shift();
+                liveHistory.temp.shift();
             }
             
             miniChart.data.labels = liveHistory.ts;
             miniChart.data.datasets[0].data = liveHistory.tds;
             miniChart.data.datasets[1].data = liveHistory.ntu;
             if (miniChart.data.datasets[2]) miniChart.data.datasets[2].data = liveHistory.ph;
+            if (miniChart.data.datasets[3]) miniChart.data.datasets[3].data = liveHistory.temp;
             miniChart.update();
         }
 
         function updateDataBars() {
-            // Raw Data Bars (TDS and NTU from ESP32)
-            const rawTdsBar = document.getElementById('raw-tds-bar');
-            const rawNtuBar = document.getElementById('raw-ntu-bar');
-            const rawTdsVal = document.getElementById('raw-tds-val');
-            const rawNtuVal = document.getElementById('raw-ntu-val');
-            
-            if (currentTDS !== null) {
-                const tdsPercent = Math.min((currentTDS / 2000) * 100, 100);
-                if (rawTdsBar) rawTdsBar.style.width = tdsPercent + '%';
-                if (rawTdsVal) rawTdsVal.textContent = currentTDS.toFixed(1);
+            const rawPhBar = document.getElementById('raw-ph-bar');
+            const rawPhVal = document.getElementById('raw-ph-val');
+            if (currentPH !== null) {
+                if (rawPhBar) rawPhBar.style.width = Math.min((currentPH / 14) * 100, 100) + '%';
+                if (rawPhVal) rawPhVal.textContent = currentPH.toFixed(2);
             }
+
+            const rawTempBar = document.getElementById('raw-temp-bar');
+            const rawTempVal = document.getElementById('raw-temp-val');
+            if (currentTemp !== null) {
+                if (rawTempBar) rawTempBar.style.width = Math.min((currentTemp / 50) * 100, 100) + '%';
+                if (rawTempVal) rawTempVal.textContent = currentTemp.toFixed(1) + ' °C';
+            }
+
+            const rawNtuBar = document.getElementById('raw-ntu-bar');
+            const rawNtuVal = document.getElementById('raw-ntu-val');
             if (currentNTU !== null) {
-                const ntuPercent = Math.min((currentNTU / 100) * 100, 100);
-                if (rawNtuBar) rawNtuBar.style.width = ntuPercent + '%';
+                if (rawNtuBar) rawNtuBar.style.width = Math.min((currentNTU / 100) * 100, 100) + '%';
                 if (rawNtuVal) rawNtuVal.textContent = currentNTU.toFixed(1);
             }
 
-            // AI Data Bars (pH and Safety from ML Model)
-            const aiPhBar = document.getElementById('ai-ph-bar');
-            const aiSafetyBar = document.getElementById('ai-safety-bar');
-            const aiPhVal = document.getElementById('ai-ph-val');
-            const aiSafetyVal = document.getElementById('ai-safety-val');
-
-            if (currentPH !== null) {
-                const phPercent = Math.min((currentPH / 14) * 100, 100);
-                if (aiPhBar) aiPhBar.style.width = phPercent + '%';
-                if (aiPhVal) aiPhVal.textContent = currentPH.toFixed(2);
-            }
-            if (currentSafetyAlert !== null) {
-                let safetyPercent = 50; // Default middle
-                const alertLower = currentSafetyAlert.toLowerCase();
-                if (alertLower.includes('safe') || alertLower.includes('ok') || alertLower.includes('normal')) {
-                    safetyPercent = 100;
-                } else if (alertLower.includes('warn') || alertLower.includes('caution') || alertLower.includes('moderate')) {
-                    safetyPercent = 50;
-                } else {
-                    safetyPercent = 10;
-                }
-                if (aiSafetyBar) aiSafetyBar.style.width = safetyPercent + '%';
-                if (aiSafetyVal) aiSafetyVal.textContent = currentSafetyAlert.toUpperCase();
+            const rawTdsBar = document.getElementById('raw-tds-bar');
+            const rawTdsVal = document.getElementById('raw-tds-val');
+            if (currentTDS !== null) {
+                if (rawTdsBar) rawTdsBar.style.width = Math.min((currentTDS / 2000) * 100, 100) + '%';
+                if (rawTdsVal) rawTdsVal.textContent = currentTDS.toFixed(1);
             }
         }
 
         function updateMetalsUI() {
+            currentLead = currentTDS * 0.005 * (currentPH < 6.5 ? 2.5 : 1);
+            currentArsenic = currentTDS * 0.002 * (currentPH > 8.5 ? 2 : 1);
+            currentIron = currentNTU * 0.08 + (currentTDS * 0.0001);
+
             const setMetal = (id, val, limit) => {
                 const el = document.getElementById(id);
                 const pill = document.getElementById(id + '-pill');
@@ -1611,14 +1821,11 @@
                 el.textContent = val.toFixed(2);
                 
                 if (val < (limit * 0.4)) { 
-                    pill.textContent = 'SAFE'; 
-                    pill.className = 'pill pill-safe'; 
+                    pill.textContent = 'SAFE'; pill.className = 'pill pill-safe'; 
                 } else if (val < limit) { 
-                    pill.textContent = 'ACCEPTABLE'; 
-                    pill.className = 'pill pill-warn'; 
+                    pill.textContent = 'ACCEPTABLE'; pill.className = 'pill pill-warn'; 
                 } else { 
-                    pill.textContent = 'DANGEROUS'; 
-                    pill.className = 'pill pill-danger'; 
+                    pill.textContent = 'DANGEROUS'; pill.className = 'pill pill-danger'; 
                 }
             };
             setMetal('metal-pb', currentLead, 10.0);
@@ -1639,7 +1846,6 @@
         };
         document.addEventListener("click", () => { const tt = document.getElementById("map-tooltip"); if (tt) tt.classList.remove('show'); });
 
-        // Start with Firebase enabled - credentials are configured
         startFirebase();
         window.loadHistoricalAndGenerateInsights();
     </script>

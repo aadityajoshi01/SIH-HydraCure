@@ -10,8 +10,8 @@ import threading
 # Load the models
 import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
-stage1_path = os.path.join(base_dir, "ml", "hydrolens_virtual_ph.pkl")
-stage2_path = os.path.join(base_dir, "ml", "hydrolens_toxicity_classifier.pkl")
+stage1_path = os.path.join(base_dir, "ml", "hydracure_virtual_ph.pkl")
+stage2_path = os.path.join(base_dir, "ml", "hydracure_toxicity_classifier.pkl")
 
 print("Loading ML models...")
 try:
@@ -41,63 +41,59 @@ except Exception as e:
 print("Firebase initialized.")
 
 def listener_callback(event):
-    # event.event_type can be 'put' or 'patch'
-    # event.path is relative to the listener reference
-    # event.data is the data
-    
     if event.data is None:
         return
         
-    data = event.data
-    # If the root node is updated, data might be a dict with the keys
-    if isinstance(data, dict):
-        if 'tds' in data and 'turbidity' in data and 'temp' in data:
-            process_data(data)
-        else:
-            # Maybe nested entries
-            for key, val in data.items():
-                if isinstance(val, dict) and 'tds' in val and 'turbidity' in val and 'temp' in val:
-                    process_data(val)
-
-def process_data(data):
     try:
-        tds = float(data.get('tds', 0))
-        turbidity = float(data.get('turbidity', 0))
-        temp = float(data.get('temp', 25))
-        
-        # Stage 1: Predict Virtual pH
-        # Assuming input shape is (1, 3)
+        # Fetch latest state from database root or nodes
+        root_data = db.reference('/').get()
+        if not isinstance(root_data, dict):
+            return
+
+        tds_node = root_data.get('tds', {})
+        turb_node = root_data.get('turbidity', {})
+        temp_node = root_data.get('temperature', {}) or root_data.get('temp', {})
+        ph_node = root_data.get('ph', {})
+
+        tds = float(tds_node.get('tds', 0) if isinstance(tds_node, dict) else (tds_node or 0))
+        turbidity = float(turb_node.get('ntu', turb_node.get('turbidity', 0)) if isinstance(turb_node, dict) else (turb_node or 0))
+        temp = float(temp_node.get('celsius', temp_node.get('temp', 25)) if isinstance(temp_node, dict) else (temp_node or 25))
+        ph = float(ph_node.get('ph', 7.0) if isinstance(ph_node, dict) else (ph_node or 7.0))
+
+        process_data(tds, turbidity, temp, ph)
+    except Exception as e:
+        print(f"Listener error: {e}")
+
+def process_data(tds, turbidity, temp, ph=7.0):
+    try:
+        # Stage 1: Predict Virtual/Inferred pH baseline
         input_stage1 = np.array([[tds, turbidity, temp]])
-        virtual_ph = float(regressor.predict(input_stage1)[0])
+        virtual_ph = float(regressor.predict(input_stage1)[0]) if regressor else ph
         
-        # Stage 2: Predict Toxicity Risk Level
-        input_stage2 = np.array([[tds, turbidity, virtual_ph]])
-        risk_level = classifier.predict(input_stage2)[0]
+        # Stage 2: Predict Toxicity Risk Level using actual or inferred pH
+        input_stage2 = np.array([[tds, turbidity, ph]])
+        risk_level = classifier.predict(input_stage2)[0] if classifier else "SAFE"
         
-        # Convert risk_level to string if it's numeric, or keep as is.
-        # Assuming it outputs something that can map to Safe, Moderate, High Risk, Toxic
-        # We will cast it to standard python types
         if isinstance(risk_level, np.generic):
             risk_level = risk_level.item()
             
-        # Push to inference_results
         ref = db.reference('live_monitoring/inference_results')
         result_payload = {
-            'virtual_ph': virtual_ph,
+            'virtual_ph': ph,
             'risk_level': risk_level,
             'timestamp': int(time.time() * 1000)
         }
         ref.push(result_payload)
-        print(f"Inference complete. Virtual pH: {virtual_ph:.2f}, Risk Level: {risk_level}")
+        print(f"Inference complete. pH: {ph:.2f}, Risk Level: {risk_level}")
         
     except Exception as e:
         print(f"Error during inference: {e}")
 
-# Start listening
-listener_ref = db.reference('live_monitoring/raw_data')
+# Start listening to root database for any sensor update
+listener_ref = db.reference('/')
 listener = listener_ref.listen(listener_callback)
 
-print("Listening for new data on live_monitoring/raw_data...")
+print("Listening for sensor updates on root database...")
 
 # Keep the script running
 try:
