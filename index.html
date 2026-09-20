@@ -4,231 +4,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HydraCure — Intelligent 4-Sensor Water Quality Monitoring</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
+    <title>HydraCure Water Quality Monitoring System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #09090b;
-            --surface: rgba(24, 24, 27, 0.6);
-            --surface-border: rgba(255, 255, 255, 0.1);
-            --primary: #00e5ff;
-            --success: #00ffcc;
-            --danger: #ff3366;
-            --warning: #ffcc00;
-            --text: #ffffff;
-            --text-muted: #a1a1aa;
-            --sidebar: 260px;
+            --bg-color: #111827;
+            --panel-bg: #1f2937;
+            --panel-border: #374151;
+            --text-main: #f9fafb;
+            --text-sub: #9ca3af;
+            --accent-blue: #2563eb;
+            --safe-color: #10b981;
+            --warn-color: #f59e0b;
+            --danger-color: #ef4444;
+            --sidebar-width: 240px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
             height: 100vh;
             overflow: hidden;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulseAlert {
-            0% { box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4); }
-            50% { box-shadow: 0 4px 30px rgba(255, 51, 102, 0.8); }
-            100% { box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4); }
-        }
-
-        @keyframes glimmer {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
+        /* Top Critical Alert Bar */
         .alert-banner {
             position: fixed;
             top: 0;
-            left: var(--sidebar);
+            left: var(--sidebar-width);
             right: 0;
-            padding: 14px;
-            text-align: center;
-            background: linear-gradient(90deg, #ff3366, #ff0044);
-            color: white;
+            padding: 10px 20px;
+            background-color: var(--danger-color);
+            color: #ffffff;
             font-weight: 600;
-            letter-spacing: 1px;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
+            font-size: 0.88rem;
+            text-align: center;
+            display: none;
             z-index: 1000;
         }
 
         .alert-banner.active {
-            transform: translateY(0);
-            animation: pulseAlert 2s infinite;
-        }
-
-        .system-banner {
-            background: rgba(255, 204, 0, 0.12);
-            border: 1px solid rgba(255, 204, 0, 0.3);
-            color: var(--warning);
-            padding: 12px 18px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar);
-            background: rgba(15, 15, 20, 0.8);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--surface-border);
-            display: flex;
-            flex-direction: column;
-            padding: 30px 20px;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 30px;
-            padding-left: 4px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo img {
-            height: 42px;
-            width: 42px;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
-            border: 1px solid rgba(0, 229, 255, 0.3);
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
-        .nav-item {
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .nav-item:hover {
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .nav-item.active {
-            color: var(--bg);
-            background: var(--primary);
-            font-weight: 600;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--danger);
-            margin-right: 12px;
-        }
-
-        .status-dot.live {
-            background: var(--success);
-            box-shadow: 0 0 8px var(--success);
-            animation: glimmer 2s infinite;
-        }
-
-        /* Main Content */
-        .main {
-            flex: 1;
-            overflow-y: auto;
-            padding: 40px;
-            padding-top: 50px;
-            position: relative;
-            scroll-behavior: smooth;
-        }
-
-        .header {
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        .page-sub {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 6px;
-        }
-
-        .section {
-            display: none;
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        .section.active {
             display: block;
         }
 
+        /* Sidebar Navigation */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #111827;
+            border-right: 1px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 14px;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px 20px;
+            border-bottom: 1px solid var(--panel-border);
+            margin-bottom: 20px;
+        }
+
+        .brand-header img {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .brand-title span {
+            color: var(--accent-blue);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            padding: 0 8px 16px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--danger-color);
+        }
+
+        .dot.active {
+            background-color: var(--safe-color);
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-sub);
+            margin: 12px 0 6px 8px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            border-radius: 6px;
+            margin-bottom: 2px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-blue);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--panel-border);
+        }
+
+        .demo-toggle-btn {
+            width: 100%;
+            padding: 9px;
+            background: #1f2937;
+            border: 1px solid var(--panel-border);
+            color: #ffffff;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .demo-toggle-btn:hover {
+            background: #374151;
+        }
+
+        /* Main Workspace */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 36px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .page-title-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .page-subtitle-text {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-badge-safe {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge-warn {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-badge-danger {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* System Alert Box */
+        .hardware-notice {
+            background-color: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Dashboard Grids */
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 25px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 25px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
-        @media (max-width: 1280px) {
+        @media (max-width: 1200px) {
             .grid-4 { grid-template-columns: repeat(2, 1fr); }
             .grid-3 { grid-template-columns: repeat(2, 1fr); }
         }
@@ -237,811 +264,456 @@
             .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
         }
 
-        .card {
-            background: var(--surface);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--surface-border);
-            border-radius: 16px;
-            padding: 22px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .card:hover {
-            border-color: rgba(0, 229, 255, 0.3);
-        }
-
-        .card-title {
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .card-val {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 10px 0 6px;
-            line-height: 1;
-        }
-
-        .card-unit {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-        }
-
-        .pill {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .pill-safe {
-            background: rgba(0, 255, 204, 0.1);
-            border: 1px solid rgba(0, 255, 204, 0.2);
-            color: var(--success);
-        }
-
-        .pill-warn {
-            background: rgba(255, 204, 0, 0.1);
-            border: 1px solid rgba(255, 204, 0, 0.2);
-            color: var(--warning);
-        }
-
-        .pill-danger {
-            background: rgba(255, 51, 102, 0.1);
-            border: 1px solid rgba(255, 51, 102, 0.2);
-            color: var(--danger);
-        }
-
-        .log-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--surface-border);
-            font-size: 0.9rem;
-        }
-
-        .log-item:last-child {
-            border: none;
-            padding-bottom: 0;
-        }
-
-        .log-time {
-            color: var(--text-muted);
-            width: 120px;
-        }
-
-        .btn {
-            background: var(--surface);
-            border: 1px solid var(--surface-border);
-            color: var(--text);
-            padding: 10px 20px;
+        /* Cards */
+        .card-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
             border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Inter';
-            font-weight: 500;
-            transition: 0.2s;
+            padding: 18px;
         }
 
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            font-weight: 600;
-        }
-
-        .btn-primary:hover {
-            background: #00b8cc;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 210px;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        /* Map styling */
-        .map-svg-wrap {
-            width: 100%;
-            border-radius: 12px;
-            overflow: visible;
-            position: relative;
-        }
-
-        .map-pin {
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .map-pin:hover {
-            transform: scale(1.15);
-        }
-
-        .map-tooltip {
-            position: absolute;
-            background: var(--bg);
-            border: 1px solid var(--surface-border);
-            border-radius: 6px;
-            padding: 12px 16px;
+        .card-label {
             font-size: 0.78rem;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            z-index: 10;
-            min-width: 180px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .map-tooltip.show {
-            opacity: 1;
-        }
-
-        .tt-area {
-            font-weight: 700;
-            color: white;
-            margin-bottom: 6px;
-            font-size: 1rem;
-        }
-
-        .tt-row {
+            font-weight: 600;
+            color: var(--text-sub);
+            text-transform: uppercase;
             display: flex;
             justify-content: space-between;
-            margin-top: 4px;
-            color: var(--text-muted);
-        }
-
-        .tt-row span:last-child {
-            color: white;
-            font-weight: 600;
-        }
-
-        /* Alert Box Styles */
-        .alert-box {
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .alert-box.alert-safe {
-            background: rgba(0, 255, 204, 0.08);
-            border-color: rgba(0, 255, 204, 0.3);
-        }
-
-        .alert-box.alert-safe .card-val {
-            color: var(--success);
-        }
-
-        .alert-box.alert-warning {
-            background: rgba(255, 204, 0, 0.08);
-            border-color: rgba(255, 204, 0, 0.3);
-            animation: pulseWarning 2s infinite;
-        }
-
-        .alert-box.alert-warning .card-val {
-            color: var(--warning);
-        }
-
-        .alert-box.alert-danger {
-            background: rgba(255, 51, 102, 0.08);
-            border-color: rgba(255, 51, 102, 0.3);
-            animation: pulseAlert 2s infinite;
-        }
-
-        .alert-box.alert-danger .card-val {
-            color: var(--danger);
-        }
-
-        @keyframes pulseWarning {
-            0% { box-shadow: 0 4px 15px rgba(255, 204, 0, 0.2); }
-            50% { box-shadow: 0 4px 25px rgba(255, 204, 0, 0.5); }
-            100% { box-shadow: 0 4px 15px rgba(255, 204, 0, 0.2); }
-        }
-
-        /* Data Bars */
-        .data-bar-container {
-            margin-top: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-            height: 8px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .data-bar {
-            height: 100%;
-            border-radius: 6px;
-            transition: width 0.5s ease, background 0.3s ease;
-        }
-
-        .data-bar.raw { background: linear-gradient(90deg, #00e5ff, #00b8cc); }
-        .data-bar.ai { background: linear-gradient(90deg, #a855f7, #7c3aed); }
-
-        .data-bar-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 6px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .bar-section-title {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin: 20px 0 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--surface-border);
-            display: flex;
             align-items: center;
-            gap: 8px;
         }
 
-        .bar-section-title .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+        .metric-value {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 8px 0 4px;
         }
 
-        .bar-section-title .dot.raw { background: #00e5ff; }
-        .bar-section-title .dot.ai { background: #a855f7; }
+        .metric-unit {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+        }
 
-        .sensor-badge {
-            background: rgba(0, 229, 255, 0.1);
-            border: 1px solid rgba(0, 229, 255, 0.25);
-            color: var(--primary);
-            font-size: 0.65rem;
-            padding: 2px 8px;
-            border-radius: 12px;
+        .metric-footer {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid var(--panel-border);
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Tables & Telemetry Lists */
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        .table-custom th {
+            padding: 10px 12px;
+            background-color: #111827;
+            color: var(--text-sub);
             font-weight: 600;
-            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--panel-border);
         }
 
-        .status-badge {
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 10px;
+        .table-custom td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--panel-border);
+            color: var(--text-main);
+        }
+
+        .chart-box {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-action {
+            background-color: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
             font-weight: 600;
-            display: inline-block;
-            margin-top: 6px;
+            cursor: pointer;
         }
 
-        .status-working {
-            background: rgba(0, 255, 204, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(0, 255, 204, 0.2);
+        .btn-action:hover {
+            background-color: #1d4ed8;
         }
 
-        .status-action {
-            background: rgba(255, 204, 0, 0.15);
-            color: var(--warning);
-            border: 1px solid rgba(255, 204, 0, 0.3);
-            animation: glimmer 2s infinite;
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="alert-banner" id="global-alert">CRITICAL ALERT: WATER QUALITY SENSOR LIMIT EXCEEDED</div>
+    <div class="alert-banner" id="global-alert">CRITICAL ALERT: WATER QUALITY PARAMETERS OUTSIDE SAFE WHO LIMITS</div>
 
-    <!-- DEMO INDICATOR -->
-    <div id="demo-indicator"
-        style="display:none; position:fixed; bottom:20px; right:20px; background:var(--primary); color:#000; padding:10px 20px; border-radius:30px; font-weight:700; font-size:0.85rem; z-index:9999; box-shadow:0 4px 15px rgba(0, 229, 255, 0.4); animation:glimmer 2s infinite; transition: opacity 0.4s ease;">
-        ⚡ Demo Mode Active (Simulating 4 Hardware Sensors)</div>
+    <!-- DEMO NOTIFICATION -->
+    <div id="demo-indicator" style="display:none; position:fixed; bottom:16px; right:16px; background:#2563eb; color:#ffffff; padding:6px 14px; border-radius:4px; font-size:0.8rem; font-weight:600; z-index:9999;">
+        Demo Simulation Active</div>
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo">
+        <div class="brand-header">
             <img src="logo.png" alt="HydraCure Logo">
-            <div>Hydra<span>Cure</span></div>
-        </div>
-        <div style="display:flex; align-items:center; padding: 0 16px 5px; color: var(--text-muted); font-size: 0.85rem;">
-            <div class="status-dot" id="live-dot"></div>
-            <span id="live-text">Waiting for Stream...</span>
-        </div>
-        <div style="display:flex; align-items:center; padding: 0 16px 20px; color: var(--text-muted); font-size: 0.85rem;">
-            <div class="status-dot" id="ai-dot"></div>
-            <span id="ai-text">AI Link Pending</span>
+            <div class="brand-title">Hydra<span>Cure</span></div>
         </div>
 
-        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 20px 0 10px 16px; font-weight: 600;">
-            Dashboards</div>
-        <a class="nav-item active" onclick="nav('overview', event)">Overview</a>
-        <a class="nav-item" onclick="nav('analytics', event)">Insights & AI</a>
-        <a class="nav-item" onclick="nav('reports', event)">Reports Hub</a>
-        <a class="nav-item" onclick="nav('map', event)">Geospatial Map</a>
+        <div class="status-indicator">
+            <div class="dot" id="live-dot"></div>
+            <span id="live-text">Awaiting Stream...</span>
+        </div>
 
-        <div style="margin-top: auto; padding-top:20px; border-top: 1px solid var(--surface-border);">
-            <button type="button" id="demo-btn" onclick="window.toggleDemo(event)"
-                style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--surface-border); border-radius: 8px; cursor: pointer; font-family: 'Inter'; font-weight: 600; transition: 0.3s; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <span id="demo-icon">▶</span> <span id="demo-text">Demo Mode</span>
-            </button>
+        <div class="nav-label">Main Menu</div>
+        <a class="nav-item active" onclick="switchTab('overview', event)">Overview</a>
+        <a class="nav-item" onclick="switchTab('analytics', event)">Analytics & Trends</a>
+        <a class="nav-item" onclick="switchTab('reports', event)">Reports Hub</a>
+        <a class="nav-item" onclick="switchTab('map', event)">Geospatial Grid</a>
+
+        <div class="sidebar-footer">
+            <button class="demo-toggle-btn" id="demo-btn" onclick="toggleDemo(event)">Toggle Demo Mode</button>
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main">
+    <!-- MAIN WORKSPACE -->
+    <div class="main-content">
 
-        <!-- OVERVIEW -->
-        <div id="overview" class="section active">
-            <div class="header">
+        <!-- OVERVIEW TAB -->
+        <div id="overview" class="tab-section active">
+            <div class="page-header">
                 <div>
-                    <div class="page-title">City Water Grid</div>
-                    <div class="page-sub">Real-time telemetrics for 4 Hardware Sensors (pH, Temp, Turbidity, TDS)</div>
-                    <div style="margin-top: 10px; padding: 4px 10px; background: rgba(0, 255, 204, 0.1); border: 1px solid rgba(0, 255, 204, 0.3); border-radius: 20px; font-size: 0.75rem; color: var(--success); display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        Connected to Realtime Firebase Hardware Node
-                    </div>
+                    <div class="page-title-text">Water Quality Monitoring Dashboard</div>
+                    <div class="page-subtitle-text">Real-time telemetry for 4 hardware sensors (pH, Temperature, Turbidity, TDS)</div>
                 </div>
-                <div class="pill pill-safe" id="ov-status" style="font-size:1rem; padding: 8px 16px;">SYS_STABLE</div>
+                <div class="status-badge status-badge-safe" id="ov-status">System Normal</div>
             </div>
 
-            <!-- SYSTEM HARDWARE ALERT BANNER IF PRESENT -->
-            <div id="system-alert-box" class="system-banner" style="display: none;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.2rem;">⚠️</span>
-                    <div>
-                        <div style="font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">Hardware Prompt</div>
-                        <div id="system-alert-text">INSERT TURBIDITY SENSOR INTO WATER</div>
-                    </div>
-                </div>
-                <span id="system-status-pill" class="status-badge status-action">ACTION REQUIRED</span>
+            <!-- HARDWARE NOTICE -->
+            <div id="hardware-notice-box" class="hardware-notice" style="display: none;">
+                <div><strong>Hardware Alert:</strong> <span id="hardware-notice-text">INSERT TURBIDITY SENSOR INTO WATER</span></div>
+                <span class="status-badge status-badge-warn" id="hardware-notice-badge">Action Required</span>
             </div>
 
-            <!-- PRIMARY 4 SENSORS GRID -->
+            <!-- 4 SENSOR CARDS -->
             <div class="grid-4">
-                <!-- 1. pH SENSOR CARD -->
-                <div class="card">
-                    <div class="card-title">
-                        <span>pH SENSOR</span>
-                        <span class="pill pill-safe" id="ph-pill">SAFE</span>
+                <!-- pH Card -->
+                <div class="card-panel">
+                    <div class="card-label">
+                        <span>pH Level</span>
+                        <span class="status-badge status-badge-safe" id="ph-pill">SAFE</span>
                     </div>
-                    <div class="card-val" id="ph-val">7.07</div>
-                    <div class="card-unit">pH Scale (0.0 – 14.0)</div>
-                    <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
-                        <span class="status-badge status-working" id="ph-hw-status">WORKING</span>
-                        <span style="font-size: 0.7rem; color: var(--text-muted);" id="ph-volt-label">2.65 V</span>
-                    </div>
-                    <div class="data-bar-container" style="height: 8px; margin-top: 10px; border-radius: 10px; background: rgba(255,255,255,0.1);">
-                        <div class="data-bar" id="ph-gauge-bar" style="width: 50.5%; background: linear-gradient(90deg, #ff3366 0%, #ffcc00 30%, #00ffcc 50%, #ffcc00 70%, #ff3366 100%);"></div>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
-                        <b>WHO & BIS Limit:</b> 6.5 – 8.5 (Safe Range)
+                    <div class="metric-value" id="ph-val">7.07</div>
+                    <div class="metric-unit">pH Scale</div>
+                    <div class="metric-footer">
+                        <span>WHO: 6.5 – 8.5</span>
+                        <span id="ph-volt-label">2.65 V</span>
                     </div>
                 </div>
 
-                <!-- 2. TEMPERATURE SENSOR CARD -->
-                <div class="card">
-                    <div class="card-title">
-                        <span>TEMPERATURE</span>
-                        <span class="pill pill-safe" id="temp-pill">NORMAL</span>
+                <!-- Temperature Card -->
+                <div class="card-panel">
+                    <div class="card-label">
+                        <span>Temperature</span>
+                        <span class="status-badge status-badge-safe" id="temp-pill">NORMAL</span>
                     </div>
-                    <div class="card-val" id="temp-val">29.5 °C</div>
-                    <div class="card-unit">Degrees Celsius (°C)</div>
-                    <div style="margin-top: 6px;">
-                        <span class="status-badge status-working" id="temp-hw-status">WORKING</span>
-                    </div>
-                    <div class="data-bar-container" style="height: 8px; margin-top: 10px; border-radius: 10px; background: rgba(255,255,255,0.1);">
-                        <div class="data-bar" id="temp-gauge-bar" style="width: 59%; background: linear-gradient(90deg, #00e5ff, #ff9f1c, #ff3366);"></div>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
-                        <b>WHO / BIS Ideal:</b> &lt; 30°C | <b>Max:</b> 35°C
+                    <div class="metric-value" id="temp-val">29.5 °C</div>
+                    <div class="metric-unit">Celsius</div>
+                    <div class="metric-footer">
+                        <span>WHO Ideal: &lt; 30°C</span>
+                        <span id="temp-status-label">Working</span>
                     </div>
                 </div>
 
-                <!-- 3. TURBIDITY SENSOR CARD -->
-                <div class="card">
-                    <div class="card-title">
-                        <span>TURBIDITY</span>
-                        <span class="pill pill-safe" id="ntu-pill">EXCELLENT</span>
+                <!-- Turbidity Card -->
+                <div class="card-panel">
+                    <div class="card-label">
+                        <span>Turbidity</span>
+                        <span class="status-badge status-badge-safe" id="ntu-pill">EXCELLENT</span>
                     </div>
-                    <div class="card-val" id="ntu-val">0.0</div>
-                    <div class="card-unit">Nephelometric Turbidity Units (NTU)</div>
-                    <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
-                        <span class="status-badge status-action" id="ntu-hw-status">INSERT INTO WATER</span>
-                        <span style="font-size: 0.7rem; color: var(--success);" id="ntu-clarity">EXCELLENT</span>
-                    </div>
-                    <div class="data-bar-container" style="height: 8px; margin-top: 10px; border-radius: 10px; background: rgba(255,255,255,0.1);">
-                        <div class="data-bar" id="ntu-gauge-bar" style="width: 0%; background: linear-gradient(90deg, #00ffcc, #ffcc00, #ff3366);"></div>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
-                        <b>WHO:</b> &lt; 5 NTU | <b>BIS:</b> &lt; 1 NTU (Ideal)
+                    <div class="metric-value" id="ntu-val">0.0</div>
+                    <div class="metric-unit">NTU</div>
+                    <div class="metric-footer">
+                        <span>WHO Limit: &lt; 5 NTU</span>
+                        <span id="ntu-status-label" style="color:#fbbf24;">Insert into Water</span>
                     </div>
                 </div>
 
-                <!-- 4. TDS SENSOR CARD -->
-                <div class="card">
-                    <div class="card-title">
-                        <span>TDS</span>
-                        <span class="pill pill-safe" id="tds-pill">EXCELLENT</span>
+                <!-- TDS Card -->
+                <div class="card-panel">
+                    <div class="card-label">
+                        <span>TDS Level</span>
+                        <span class="status-badge status-badge-safe" id="tds-pill">EXCELLENT</span>
                     </div>
-                    <div class="card-val" id="tds-val">139.8</div>
-                    <div class="card-unit">Total Dissolved Solids (mg/L / ppm)</div>
-                    <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
-                        <span class="status-badge status-working" id="tds-hw-status">WORKING</span>
-                        <span style="font-size: 0.7rem; color: var(--text-muted);" id="tds-volt-label">0.29V | Cal: 0.5</span>
-                    </div>
-                    <div class="data-bar-container" style="height: 8px; margin-top: 10px; border-radius: 10px; background: rgba(255,255,255,0.1);">
-                        <div class="data-bar" id="tds-gauge-bar" style="width: 7%; background: linear-gradient(90deg, #00e5ff, #00ffcc, #ffcc00, #ff3366);"></div>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #00ffcc; margin-top: 10px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 8px; line-height: 1.4;">
-                        <b>WHO:</b> &lt; 600 ppm | <b>BIS:</b> &lt; 500 ppm
+                    <div class="metric-value" id="tds-val">139.8</div>
+                    <div class="metric-unit">ppm (mg/L)</div>
+                    <div class="metric-footer">
+                        <span>WHO Limit: &lt; 600 ppm</span>
+                        <span id="tds-volt-label">0.29 V</span>
                     </div>
                 </div>
             </div>
 
-            <!-- SECONDARY HARDWARE TELEMETRY GRID -->
+            <!-- SYSTEM TELEMETRY -->
             <div class="grid-3">
-                <div class="card">
-                    <div class="card-title">HARDWARE POWER RAIL</div>
-                    <div class="card-val" id="volt-val">2.65 V</div>
-                    <div class="card-unit" id="volt-subtext">pH Rail: 2.65V | TDS Rail: 0.29V</div>
+                <div class="card-panel">
+                    <div class="card-label">Sensor Voltage Rail</div>
+                    <div class="metric-value" id="volt-val" style="font-size:1.5rem; margin-top:8px;">2.65 V</div>
+                    <div class="metric-unit" id="volt-subtext">pH Rail: 2.65 V | TDS Rail: 0.29 V</div>
                 </div>
-                <div class="card alert-box alert-safe" id="safety-alert-box">
-                    <div class="card-title">TOXICITY RISK LEVEL</div>
-                    <div class="card-val" id="safety-alert-text" style="font-size:1.4rem;">SAFE</div>
-                    <div class="card-unit">Multi-Sensor AI Classifier</div>
-                    
-                    <div style="display: flex; gap: 4px; margin-top: 15px; height: 10px; border-radius: 5px; overflow: hidden;">
-                        <div id="tier-safe" style="flex: 1; background: #00ffcc; transition: background 0.3s;"></div>
-                        <div id="tier-moderate" style="flex: 1; background: rgba(255,255,255,0.1); transition: background 0.3s;"></div>
-                        <div id="tier-high" style="flex: 1; background: rgba(255,255,255,0.1); transition: background 0.3s;"></div>
-                        <div id="tier-toxic" style="flex: 1; background: rgba(255,255,255,0.1); transition: background 0.3s;"></div>
-                    </div>
-                    <div class="data-bar-label" style="display: flex; justify-content: space-between; font-size: 0.65rem; margin-top: 6px; padding: 0 2px;">
-                        <span>Safe</span>
-                        <span>Mod</span>
-                        <span>High</span>
-                        <span>Toxic</span>
-                    </div>
+                <div class="card-panel">
+                    <div class="card-label">Toxicity Assessment</div>
+                    <div class="metric-value" id="safety-alert-text" style="font-size:1.5rem; margin-top:8px; color:#34d399;">SAFE</div>
+                    <div class="metric-unit">Multi-sensor classifier</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">STREAM CONNECTION</div>
-                    <div class="card-val" id="conn-status" style="font-size:1.4rem;">Active</div>
-                    <div class="card-unit" id="wqi-label">Firebase Link | WQI: 0</div>
+                <div class="card-panel">
+                    <div class="card-label">Firebase Connection</div>
+                    <div class="metric-value" id="conn-status" style="font-size:1.5rem; margin-top:8px;">Active</div>
+                    <div class="metric-unit" id="wqi-label">Stream: Online | WQI: 0</div>
                 </div>
             </div>
 
             <div class="grid-2">
-                <div class="card">
-                    <div class="card-title" style="margin-bottom: 10px;">Live 4-Sensor Telemetry Trend</div>
-                    <div style="position: relative; height: 170px; width: 100%;">
+                <div class="card-panel">
+                    <div class="card-label">Real-time Sensor Trend</div>
+                    <div class="chart-box">
                         <canvas id="miniLiveChart"></canvas>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-title">AI Quick Analysis</div>
-                    <div style="margin-top: 20px; font-size: 1.05rem; line-height: 1.6; color: var(--text-muted);"
-                        id="ai-quick-text">
-                        Processing 4-sensor baseline telemetrics...
+                <div class="card-panel">
+                    <div class="card-label">Analysis Summary</div>
+                    <div style="margin-top:14px; font-size:0.85rem; line-height:1.6; color:var(--text-sub);" id="ai-quick-text">
+                        All physical hardware sensors (pH, Temperature, Turbidity, TDS) are recording standard values.
                     </div>
                 </div>
             </div>
 
-            <!-- HARDWARE SENSOR TELEMETRY (4 INTEGRATED SENSORS) -->
-            <div class="bar-section-title">
-                <span class="dot raw"></span> HARDWARE SENSOR TELEMETRY (REALTIME HARDWARE NODES)
-            </div>
-            <div class="grid-4">
-                <div class="card">
-                    <div class="card-title">pH Sensor <span class="sensor-badge">NODE: /ph</span></div>
-                    <div class="card-val" id="raw-ph-val" style="font-size:1.6rem;">7.07</div>
-                    <div class="card-unit">pH Value</div>
-                    <div class="data-bar-container">
-                        <div class="data-bar raw" id="raw-ph-bar" style="width: 50.5%; background: linear-gradient(90deg, #ff007f, #a855f7);"></div>
-                    </div>
-                    <div class="data-bar-label">
-                        <span>0.0</span>
-                        <span>Max: 14.0</span>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Temperature Sensor <span class="sensor-badge">NODE: /temperature</span></div>
-                    <div class="card-val" id="raw-temp-val" style="font-size:1.6rem;">29.5 °C</div>
-                    <div class="card-unit">Celsius</div>
-                    <div class="data-bar-container">
-                        <div class="data-bar raw" id="raw-temp-bar" style="width: 59%; background: linear-gradient(90deg, #ff9f1c, #ff3366);"></div>
-                    </div>
-                    <div class="data-bar-label">
-                        <span>0°C</span>
-                        <span>Max: 50°C</span>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Turbidity Sensor <span class="sensor-badge">NODE: /turbidity</span></div>
-                    <div class="card-val" id="raw-ntu-val" style="font-size:1.6rem;">0.0</div>
-                    <div class="card-unit">NTU</div>
-                    <div class="data-bar-container">
-                        <div class="data-bar raw" id="raw-ntu-bar" style="width: 0%"></div>
-                    </div>
-                    <div class="data-bar-label">
-                        <span>0</span>
-                        <span>Max: 100 NTU</span>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-title">TDS Sensor <span class="sensor-badge">NODE: /tds</span></div>
-                    <div class="card-val" id="raw-tds-val" style="font-size:1.6rem;">139.8</div>
-                    <div class="card-unit">ppm</div>
-                    <div class="data-bar-container">
-                        <div class="data-bar raw" id="raw-tds-bar" style="width: 7%"></div>
-                    </div>
-                    <div class="data-bar-label">
-                        <span>0</span>
-                        <span>Max: 2000 ppm</span>
-                    </div>
-                </div>
+            <!-- HARDWARE TELEMETRY TABLE -->
+            <div style="font-size:0.88rem; font-weight:600; color:#ffffff; margin: 20px 0 10px;">Hardware Node Details</div>
+            <div class="card-panel" style="padding:0; overflow:hidden;">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Sensor Node</th>
+                            <th>Parameter</th>
+                            <th>Current Value</th>
+                            <th>Operating Status</th>
+                            <th>Rail Voltage / Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>/ph</code></td>
+                            <td>pH Level</td>
+                            <td><strong id="tbl-ph-val">7.07</strong> pH</td>
+                            <td><span class="status-badge status-badge-safe" id="tbl-ph-status">WORKING</span></td>
+                            <td><span id="tbl-ph-volt">2.65 V</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>/temperature</code></td>
+                            <td>Water Temperature</td>
+                            <td><strong id="tbl-temp-val">29.5</strong> °C</td>
+                            <td><span class="status-badge status-badge-safe" id="tbl-temp-status">WORKING</span></td>
+                            <td>Standard Thermal Probe</td>
+                        </tr>
+                        <tr>
+                            <td><code>/turbidity</code></td>
+                            <td>Turbidity (Clarity)</td>
+                            <td><strong id="tbl-ntu-val">0.0</strong> NTU</td>
+                            <td><span class="status-badge status-badge-warn" id="tbl-ntu-status">INSERT INTO WATER</span></td>
+                            <td>Clarity: EXCELLENT</td>
+                        </tr>
+                        <tr>
+                            <td><code>/tds</code></td>
+                            <td>Total Dissolved Solids</td>
+                            <td><strong id="tbl-tds-val">139.8</strong> ppm</td>
+                            <td><span class="status-badge status-badge-safe" id="tbl-tds-status">WORKING</span></td>
+                            <td><span id="tbl-tds-volt">0.29 V | Cal: 0.5</span></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <!-- Heavy Metals Inference Section -->
-            <div class="bar-section-title">
-                <span class="dot ai" style="background:#ff3366;"></span> TRACE METALS INFERENCE (AI Correlation Engine)
-            </div>
+            <!-- TRACE METALS ESTIMATE -->
+            <div style="font-size:0.88rem; font-weight:600; color:#ffffff; margin: 24px 0 10px;">Trace Heavy Metals Estimate (AI Baseline)</div>
             <div class="grid-3">
-                <div class="card">
-                    <div class="card-title">Lead (Pb) <span class="pill pill-safe" id="metal-pb-pill">SAFE</span></div>
-                    <div class="card-val" id="metal-pb">0.70</div>
-                    <div class="card-unit">ppb (WHO limit: 10 ppb)</div>
+                <div class="card-panel">
+                    <div class="card-label">Lead (Pb) <span class="status-badge status-badge-safe" id="metal-pb-pill">SAFE</span></div>
+                    <div class="metric-value" id="metal-pb" style="font-size:1.4rem; margin-top:6px;">0.70</div>
+                    <div class="metric-unit">ppb (WHO Limit: 10 ppb)</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">Arsenic (As) <span class="pill pill-safe" id="metal-as-pill">SAFE</span></div>
-                    <div class="card-val" id="metal-as">0.28</div>
-                    <div class="card-unit">ppb (WHO limit: 10 ppb)</div>
+                <div class="card-panel">
+                    <div class="card-label">Arsenic (As) <span class="status-badge status-badge-safe" id="metal-as-pill">SAFE</span></div>
+                    <div class="metric-value" id="metal-as" style="font-size:1.4rem; margin-top:6px;">0.28</div>
+                    <div class="metric-unit">ppb (WHO Limit: 10 ppb)</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">Iron (Fe) <span class="pill pill-safe" id="metal-fe-pill">SAFE</span></div>
-                    <div class="card-val" id="metal-fe">0.01</div>
-                    <div class="card-unit">mg/L (BIS limit: 1.0 mg/L)</div>
+                <div class="card-panel">
+                    <div class="card-label">Iron (Fe) <span class="status-badge status-badge-safe" id="metal-fe-pill">SAFE</span></div>
+                    <div class="metric-value" id="metal-fe" style="font-size:1.4rem; margin-top:6px;">0.01</div>
+                    <div class="metric-unit">mg/L (BIS Limit: 1.0 mg/L)</div>
                 </div>
             </div>
         </div>
 
-        <!-- ANALYTICS -->
-        <div id="analytics" class="section">
-            <div class="header">
+        <!-- ANALYTICS TAB -->
+        <div id="analytics" class="tab-section">
+            <div class="page-header">
                 <div>
-                    <div class="page-title">Predictive Insights</div>
-                    <div class="page-sub">AI-driven analysis across all 4 hardware sensor channels</div>
+                    <div class="page-title-text">Analytics & Historical Trends</div>
+                    <div class="page-subtitle-text">Time-series tracking across all 4 physical sensor channels</div>
                 </div>
             </div>
 
             <div class="grid-3">
-                <div class="card">
-                    <div class="card-title">historical trend</div>
-                    <div class="card-val" style="font-size:1.8rem;" id="trend-text">Stable Trend</div>
-                    <div class="card-unit" id="trend-sub">Minimal fluctuations detected</div>
+                <div class="card-panel">
+                    <div class="card-label">Historical Trend</div>
+                    <div class="metric-value" style="font-size:1.3rem; margin-top:6px;" id="trend-text">Stable</div>
+                    <div class="metric-unit" id="trend-sub">Normal readings</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">future risk prediction</div>
-                    <div class="card-val" style="font-size:1.8rem;" id="risk-text">SAFE</div>
-                    <div class="card-unit">Multi-variable assessment</div>
+                <div class="card-panel">
+                    <div class="card-label">Risk Evaluation</div>
+                    <div class="metric-value" style="font-size:1.3rem; margin-top:6px;" id="risk-text">SAFE</div>
+                    <div class="metric-unit">Multi-variable status</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">alert freq. log</div>
-                    <div class="card-val" style="font-size:1.8rem;" id="alert-freq">0 flags</div>
-                    <div class="card-unit">Spikes detected today</div>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-title">pH vs Time (/ph node)</div>
-                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">WHO & BIS Safe Window: 6.5 – 8.5 pH</div>
-                    <div class="chart-container"><canvas id="mainPhChart"></canvas></div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Temperature vs Time (/temperature node)</div>
-                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Ideal: &lt;30°C | Warning: &gt;35°C</div>
-                    <div class="chart-container"><canvas id="mainTempChart"></canvas></div>
+                <div class="card-panel">
+                    <div class="card-label">Alert Count</div>
+                    <div class="metric-value" style="font-size:1.3rem; margin-top:6px;" id="alert-freq">0 Flags</div>
+                    <div class="metric-unit">Logged events</div>
                 </div>
             </div>
 
             <div class="grid-2">
-                <div class="card">
-                    <div class="card-title">TDS vs Time (/tds node)</div>
-                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Red segments indicate unsafe levels (&gt;1000 ppm)</div>
-                    <div class="chart-container"><canvas id="mainTdsChart"></canvas></div>
+                <div class="card-panel">
+                    <div class="card-label">pH Level vs Time</div>
+                    <div class="chart-box"><canvas id="mainPhChart"></canvas></div>
                 </div>
-                <div class="card">
-                    <div class="card-title">Turbidity vs Time (/turbidity node)</div>
-                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Red segments indicate unsafe levels (&gt;5 NTU)</div>
-                    <div class="chart-container"><canvas id="mainNtuChart"></canvas></div>
+                <div class="card-panel">
+                    <div class="card-label">Temperature vs Time</div>
+                    <div class="chart-box"><canvas id="mainTempChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card-panel">
+                    <div class="card-label">TDS Level vs Time</div>
+                    <div class="chart-box"><canvas id="mainTdsChart"></canvas></div>
+                </div>
+                <div class="card-panel">
+                    <div class="card-label">Turbidity vs Time</div>
+                    <div class="chart-box"><canvas id="mainNtuChart"></canvas></div>
                 </div>
             </div>
         </div>
 
-        <!-- REPORTS -->
-        <div id="reports" class="section">
-            <div class="header">
+        <!-- REPORTS TAB -->
+        <div id="reports" class="tab-section">
+            <div class="page-header">
                 <div>
-                    <div class="page-title">Export & Intelligence</div>
-                    <div class="page-sub">Generate compliance reports across all 4 sensor streams</div>
+                    <div class="page-title-text">Reports Hub</div>
+                    <div class="page-subtitle-text">Export dataset and review session statistics</div>
                 </div>
-                <button class="btn btn-primary"
-                    onclick="window.location.href='/api/export'">Download CSV Dataset</button>
+                <button class="btn-action" onclick="window.location.href='/api/export'">Export CSV Dataset</button>
             </div>
 
             <div class="grid-4">
-                <div class="card">
-                    <div class="card-title">Average pH</div>
-                    <div class="card-val" id="rep-avg-ph">7.07</div>
-                    <div class="card-unit">Session runtime</div>
+                <div class="card-panel">
+                    <div class="card-label">Average pH</div>
+                    <div class="metric-value" id="rep-avg-ph" style="font-size:1.5rem; margin-top:4px;">7.07</div>
+                    <div class="metric-unit">Session runtime</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">Average Temp</div>
-                    <div class="card-val" id="rep-avg-temp">29.5 °C</div>
-                    <div class="card-unit">Session runtime</div>
+                <div class="card-panel">
+                    <div class="card-label">Average Temperature</div>
+                    <div class="metric-value" id="rep-avg-temp" style="font-size:1.5rem; margin-top:4px;">29.5 °C</div>
+                    <div class="metric-unit">Session runtime</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">Average TDS</div>
-                    <div class="card-val" id="rep-avg-tds">140</div>
-                    <div class="card-unit">ppm</div>
+                <div class="card-panel">
+                    <div class="card-label">Average TDS</div>
+                    <div class="metric-value" id="rep-avg-tds" style="font-size:1.5rem; margin-top:4px;">140</div>
+                    <div class="metric-unit">ppm</div>
                 </div>
-                <div class="card">
-                    <div class="card-title">Max Turbidity</div>
-                    <div class="card-val" id="rep-max-ntu">0.0</div>
-                    <div class="card-unit">Peak NTU</div>
+                <div class="card-panel">
+                    <div class="card-label">Max Turbidity</div>
+                    <div class="metric-value" id="rep-max-ntu" style="font-size:1.5rem; margin-top:4px;">0.0</div>
+                    <div class="metric-unit">Peak NTU</div>
                 </div>
             </div>
 
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-title">Overall Compliance Index (4 Parameters)</div>
-                <div class="card-val" id="rep-safe-pct" style="color:var(--success)">100%</div>
-                <div class="card-unit">Frames matching all 4 WHO & BIS safety thresholds simultaneously</div>
+            <div class="card-panel" style="margin-bottom: 16px;">
+                <div class="card-label">Overall Safety Compliance</div>
+                <div class="metric-value" id="rep-safe-pct" style="color:#34d399; font-size:1.8rem; margin-top:4px;">100%</div>
+                <div class="metric-unit">Percentage of readings within WHO guidelines</div>
             </div>
 
-            <div class="card">
-                <div class="card-title" style="margin-bottom: 12px;">Recent Alert History</div>
-                <div id="alert-history-log" style="max-height: 400px; overflow-y: auto;">
-                    <div class="log-item" style="color:var(--text-muted);">No critical events logged in this session.
-                    </div>
+            <div class="card-panel">
+                <div class="card-label" style="margin-bottom: 10px;">Alert History Log</div>
+                <div id="alert-history-log" style="max-height: 300px; overflow-y: auto;">
+                    <div class="log-item" style="color:var(--text-sub);">No critical alerts logged.</div>
                 </div>
             </div>
         </div>
 
-        <!-- MAP -->
-        <div id="map" class="section">
-            <div class="header">
+        <!-- GEOSPATIAL MAP TAB -->
+        <div id="map" class="tab-section">
+            <div class="page-header">
                 <div>
-                    <div class="page-title">Geospatial Grid</div>
-                    <div class="page-sub">Live monitoring zones mapped continuously</div>
+                    <div class="page-title-text">Geospatial Grid</div>
+                    <div class="page-subtitle-text">Nashik City pipeline monitoring nodes</div>
                 </div>
             </div>
-            <div class="card" style="padding: 0; background: #0a1e2c; border-color: #1a4a6a;">
+            <div class="card-panel" style="padding:0; overflow:hidden;">
                 <div class="map-svg-wrap" id="map-container">
-
-                    <!-- SVG road map of Nashik areas -->
                     <svg viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Background -->
-                        <rect width="800" height="480" fill="#0a1e2c" />
+                        <rect width="800" height="480" fill="#111827" />
+                        <path d="M0,200 Q100,180 200,210 Q320,240 420,220 Q540,200 650,230 Q730,250 800,240" fill="none" stroke="#1f2937" stroke-width="14" />
+                        <text x="320" y="248" fill="#4b5563" font-size="11">Godavari River</text>
 
-                        <!-- River (Godavari) -->
-                        <path d="M0,200 Q100,180 200,210 Q320,240 420,220 Q540,200 650,230 Q730,250 800,240" fill="none"
-                            stroke="#1a4a6a" stroke-width="18" opacity="0.7" />
-                        <path d="M0,200 Q100,180 200,210 Q320,240 420,220 Q540,200 650,230 Q730,250 800,240" fill="none"
-                            stroke="#1e5f82" stroke-width="10" opacity="0.5" />
-                        <text x="320" y="248" fill="#2a7a9a" font-size="11" font-family="Inter" opacity="0.8">Godavari
-                            River</text>
+                        <line x1="0" y1="300" x2="800" y2="300" stroke="#1f2937" stroke-width="6" />
+                        <line x1="400" y1="0" x2="400" y2="480" stroke="#1f2937" stroke-width="6" />
 
-                        <!-- Major roads -->
-                        <line x1="0" y1="300" x2="800" y2="300" stroke="#1a3a52" stroke-width="8" />
-                        <line x1="400" y1="0" x2="400" y2="480" stroke="#1a3a52" stroke-width="8" />
-                        <line x1="0" y1="150" x2="800" y2="150" stroke="#162d3f" stroke-width="4" />
-                        <line x1="200" y1="0" x2="200" y2="480" stroke="#162d3f" stroke-width="4" />
-                        <line x1="600" y1="0" x2="600" y2="480" stroke="#162d3f" stroke-width="4" />
-                        <line x1="0" y1="380" x2="800" y2="380" stroke="#162d3f" stroke-width="3" />
+                        <text x="100" y="345" fill="#6b7280" font-size="10" text-anchor="middle">PANCHAVATI</text>
+                        <text x="300" y="345" fill="#6b7280" font-size="10" text-anchor="middle">UPNAGAR NAKA</text>
+                        <text x="500" y="345" fill="#6b7280" font-size="10" text-anchor="middle">AMRUTNAGAR</text>
+                        <text x="700" y="345" fill="#6b7280" font-size="10" text-anchor="middle">SATPUR</text>
 
-                        <!-- Diagonal roads -->
-                        <line x1="0" y1="480" x2="400" y2="150" stroke="#11283a" stroke-width="3" />
-                        <line x1="800" y1="480" x2="400" y2="150" stroke="#11283a" stroke-width="3" />
-                        <line x1="200" y1="0" x2="600" y2="480" stroke="#11283a" stroke-width="2" />
-
-                        <!-- Area blocks (subtle) -->
-                        <rect x="10" y="310" width="180" height="60" rx="4" fill="#0d2030" opacity="0.5" />
-                        <rect x="210" y="310" width="180" height="60" rx="4" fill="#0d2030" opacity="0.5" />
-                        <rect x="410" y="310" width="180" height="60" rx="4" fill="#0d2030" opacity="0.5" />
-                        <rect x="610" y="310" width="180" height="60" rx="4" fill="#0d2030" opacity="0.5" />
-                        <rect x="10" y="160" width="180" height="60" rx="4" fill="#0d2030" opacity="0.4" />
-                        <rect x="410" y="160" width="180" height="60" rx="4" fill="#0d2030" opacity="0.4" />
-                        <rect x="610" y="160" width="180" height="60" rx="4" fill="#0d2030" opacity="0.4" />
-                        <rect x="10" y="390" width="180" height="80" rx="4" fill="#0d2030" opacity="0.3" />
-                        <rect x="610" y="390" width="180" height="80" rx="4" fill="#0d2030" opacity="0.3" />
-
-                        <!-- Area name labels -->
-                        <text x="100" y="345" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">PANCHAVATI</text>
-                        <text x="300" y="345" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">UPNAGAR NAKA</text>
-                        <text x="500" y="345" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">AMRUTNAGAR</text>
-                        <text x="700" y="345" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">SATPUR</text>
-                        <text x="100" y="195" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">NASHIK ROAD</text>
-                        <text x="500" y="195" fill="#2a5a72" font-size="9" font-family="Inter" text-anchor="middle">CBS CHOWK</text>
-                        <text x="700" y="195" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">DWARKA</text>
-                        <text x="100" y="435" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">GANGAPUR</text>
-                        <text x="700" y="435" fill="#2a5a72" font-size="9" font-family="Inter"
-                            text-anchor="middle">CIDCO</text>
-
-                        <!-- NASHIK label center -->
-                        <text x="400" y="100" fill="#1a5a7a" font-size="28" font-family="Rajdhani" font-weight="700"
-                            text-anchor="middle" opacity="0.25" letter-spacing="6">NASHIK</text>
-
+                        <text x="400" y="100" fill="#374151" font-size="22" font-weight="700" text-anchor="middle">NASHIK PIPELINE GRID</text>
                     </svg>
 
-                    <!-- MAP PINS -->
+                    <!-- PINS -->
                     <div class="map-pin" style="position:absolute;left:11%;top:62%;"
                         onclick="showTooltip(event,'Panchavati','⚠️ CAUTION','pH: 6.2 | Temp: 28°C','TDS: 480 ppm | NTU: 6.2','warn')">
-                        <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ff9f1c" />
-                            <circle cx="14" cy="14" r="6" fill="#07111a" />
-                        </svg>
+                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#f59e0b" /><circle cx="14" cy="14" r="5" fill="#111827" /></svg>
                     </div>
 
                     <div class="map-pin" style="position:absolute;left:35%;top:62%;"
                         onclick="showTooltip(event,'Upnagar Naka','✅ SAFE','pH: 7.07 | Temp: 29.5°C','TDS: 139.8 ppm | NTU: 0.0','safe')">
-                        <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#00c9b1" />
-                            <circle cx="14" cy="14" r="6" fill="#07111a" />
-                        </svg>
+                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#10b981" /><circle cx="14" cy="14" r="5" fill="#111827" /></svg>
                     </div>
 
                     <div class="map-pin" style="position:absolute;left:60%;top:62%;"
                         onclick="showTooltip(event,'Amrutnagar','❌ UNSAFE','pH: 5.2 | Temp: 36°C','TDS: 1240 ppm | NTU: 18.5','danger')">
-                        <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ff3d57" />
-                            <circle cx="14" cy="14" r="6" fill="#07111a" />
-                        </svg>
-                    </div>
-
-                    <div class="map-pin" style="position:absolute;left:84%;top:62%;"
-                        onclick="showTooltip(event,'Satpur','✅ SAFE','pH: 7.4 | Temp: 23°C','TDS: 310 ppm | NTU: 2.1','safe')">
-                        <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#00c9b1" />
-                            <circle cx="14" cy="14" r="6" fill="#07111a" />
-                        </svg>
-                    </div>
-
-                    <div class="map-pin" style="position:absolute;left:57%;top:36%;"
-                        onclick="showTooltip(event,'CBS Chowk','✅ SAFE','pH: 7.1 | Temp: 22°C','TDS: 180 ppm | NTU: 1.2','safe')">
-                        <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#00c9b1" />
-                            <circle cx="14" cy="14" r="6" fill="#07111a" />
-                        </svg>
-                    </div>
-
-                    <div class="map-pin" style="position:absolute;left:11%;top:83%;"
-                        onclick="showTooltip(event,'Gangapur','⚠️ CAUTION','pH: 8.6 | Temp: 31°C','TDS: 520 ppm | NTU: 7.8','warn')">
-                        <svg width="28" height="36" viewBox="0 0 28 36">
-                            <path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ff9f1c" />
-                            <circle cx="14" cy="14" r="6" fill="#07111a" />
-                        </svg>
+                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ef4444" /><circle cx="14" cy="14" r="5" fill="#111827" /></svg>
                     </div>
 
                     <!-- Tooltip -->
                     <div class="map-tooltip" id="map-tooltip">
-                        <div class="tt-area" id="tt-area">--</div>
-                        <div class="tt-row"><span>Status</span><span id="tt-status">--</span></div>
-                        <div class="tt-row"><span>pH & Temp</span><span id="tt-tds">--</span></div>
-                        <div class="tt-row"><span>TDS & Turbidity</span><span id="tt-ntu">--</span></div>
+                        <div style="font-weight:700; color:white; margin-bottom:4px;" id="tt-area">--</div>
+                        <div style="display:flex; justify-content:space-between;"><span>Status:</span><span id="tt-status">--</span></div>
+                        <div style="display:flex; justify-content:space-between;"><span>pH/Temp:</span><span id="tt-tds">--</span></div>
+                        <div style="display:flex; justify-content:space-between;"><span>TDS/NTU:</span><span id="tt-ntu">--</span></div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -1050,10 +722,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBab-qChNIv1QNfbMmS1xaAI1JYUl2YZQE",
             authDomain: "iot-basics-5ba4b.firebaseapp.com",
@@ -1072,7 +743,7 @@
 
         const db = getDatabase(app);
 
-        // State variables matching updated Firebase Schema
+        // State matching exact user DB schema
         let currentPH = 7.07;
         let currentTemp = 29.5;
         let currentNTU = 0.0;
@@ -1094,184 +765,119 @@
         let wqiVal = 0;
 
         let lastPushTime = 0;
-        let currentSafetyAlert = 'SAFE';
         let currentLead = 0.70, currentArsenic = 0.28, currentIron = 0.01;
-
         let liveHistory = { ts: [], tds: [], ntu: [], ph: [], temp: [] };
         let fullHistory = [];
-        let alertLog = [];
 
-        window.nav = function (target, event) {
-            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+        window.switchTab = function (target, event) {
+            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(target).classList.add('active');
             if (event) event.currentTarget.classList.add('active');
         };
 
-        function setPillText(id, text, className) {
+        function setBadge(id, text, type) {
             const el = document.getElementById(id);
             if (!el) return;
             el.textContent = text;
-            el.className = 'pill ' + className;
+            const cls = type === 'safe' ? 'status-badge-safe' : (type === 'warn' ? 'status-badge-warn' : 'status-badge-danger');
+            el.className = 'status-badge ' + cls;
         }
 
         function updateSensorCards() {
-            // System Banner Prompt
-            const sysBox = document.getElementById('system-alert-box');
-            const sysText = document.getElementById('system-alert-text');
-            const sysPill = document.getElementById('system-status-pill');
+            // Notice Box
+            const sysBox = document.getElementById('hardware-notice-box');
+            const sysText = document.getElementById('hardware-notice-text');
+            const sysPill = document.getElementById('hardware-notice-badge');
 
             if (systemAlert || turbidityStatus === "INSERT INTO WATER") {
                 if (sysBox) sysBox.style.display = 'flex';
                 if (sysText) sysText.textContent = systemAlert || "INSERT TURBIDITY SENSOR INTO WATER";
-                if (sysPill) {
-                    sysPill.textContent = systemStatus || "ACTION REQUIRED";
-                    sysPill.className = "status-badge status-action";
-                }
+                if (sysPill) sysPill.textContent = systemStatus || "Action Required";
             } else if (sysBox) {
                 sysBox.style.display = 'none';
             }
 
-            // pH Card
+            // pH
             const phValEl = document.getElementById('ph-val');
-            if (phValEl && currentPH !== null) {
+            if (phValEl) {
                 phValEl.textContent = currentPH.toFixed(2);
-                if (currentPH >= 6.5 && currentPH <= 8.5) setPillText('ph-pill', 'SAFE', 'pill-safe');
-                else if (currentPH >= 6.0 && currentPH <= 9.0) setPillText('ph-pill', 'ACCEPTABLE', 'pill-warn');
-                else setPillText('ph-pill', 'DANGEROUS', 'pill-danger');
-
-                const phHwStatus = document.getElementById('ph-hw-status');
-                if (phHwStatus) {
-                    phHwStatus.textContent = phStatus.toUpperCase();
-                    phHwStatus.className = phStatus.toUpperCase() === 'WORKING' ? 'status-badge status-working' : 'status-badge status-action';
-                }
+                if (currentPH >= 6.5 && currentPH <= 8.5) setBadge('ph-pill', 'SAFE', 'safe');
+                else if (currentPH >= 6.0 && currentPH <= 9.0) setBadge('ph-pill', 'ACCEPTABLE', 'warn');
+                else setBadge('ph-pill', 'DANGEROUS', 'danger');
 
                 const phVoltLabel = document.getElementById('ph-volt-label');
-                if (phVoltLabel && phVoltage !== null) {
-                    phVoltLabel.textContent = phVoltage.toFixed(2) + ' V';
-                }
+                if (phVoltLabel) phVoltLabel.textContent = phVoltage.toFixed(2) + ' V';
 
-                const phGauge = document.getElementById('ph-gauge-bar');
-                if (phGauge) {
-                    let pct = Math.max(0, Math.min(100, (currentPH / 14) * 100));
-                    phGauge.style.width = pct + '%';
-                }
+                const tblPhVal = document.getElementById('tbl-ph-val');
+                if (tblPhVal) tblPhVal.textContent = currentPH.toFixed(2);
+                const tblPhVolt = document.getElementById('tbl-ph-volt');
+                if (tblPhVolt) tblPhVolt.textContent = phVoltage.toFixed(2) + ' V';
+                const tblPhStatus = document.getElementById('tbl-ph-status');
+                if (tblPhStatus) { tblPhStatus.textContent = phStatus.toUpperCase(); tblPhStatus.className = 'status-badge status-badge-safe'; }
             }
 
-            // Temp Card
+            // Temp
             const tempValEl = document.getElementById('temp-val');
-            if (tempValEl && currentTemp !== null) {
+            if (tempValEl) {
                 tempValEl.textContent = currentTemp.toFixed(1) + ' °C';
-                if (currentTemp <= 30) setPillText('temp-pill', 'NORMAL', 'pill-safe');
-                else if (currentTemp <= 35) setPillText('temp-pill', 'WARM', 'pill-warn');
-                else setPillText('temp-pill', 'ELEVATED', 'pill-danger');
+                if (currentTemp <= 30) setBadge('temp-pill', 'NORMAL', 'safe');
+                else if (currentTemp <= 35) setBadge('temp-pill', 'WARM', 'warn');
+                else setBadge('temp-pill', 'ELEVATED', 'danger');
 
-                const tempHwStatus = document.getElementById('temp-hw-status');
-                if (tempHwStatus) {
-                    tempHwStatus.textContent = tempStatus.toUpperCase();
-                    tempHwStatus.className = tempStatus.toUpperCase() === 'WORKING' ? 'status-badge status-working' : 'status-badge status-action';
-                }
-
-                const tempGauge = document.getElementById('temp-gauge-bar');
-                if (tempGauge) {
-                    let pct = Math.max(0, Math.min(100, (currentTemp / 50) * 100));
-                    tempGauge.style.width = pct + '%';
-                }
+                const tblTempVal = document.getElementById('tbl-temp-val');
+                if (tblTempVal) tblTempVal.textContent = currentTemp.toFixed(1);
             }
 
-            // NTU Card
+            // Turbidity
             const ntuValEl = document.getElementById('ntu-val');
-            if (ntuValEl && currentNTU !== null) {
+            if (ntuValEl) {
                 ntuValEl.textContent = currentNTU.toFixed(1);
-                if (currentNTU <= 1.0) setPillText('ntu-pill', 'EXCELLENT', 'pill-safe');
-                else if (currentNTU <= 5.0) setPillText('ntu-pill', 'ACCEPTABLE', 'pill-safe');
-                else setPillText('ntu-pill', 'DANGEROUS', 'pill-danger');
+                if (currentNTU <= 1.0) setBadge('ntu-pill', 'EXCELLENT', 'safe');
+                else if (currentNTU <= 5.0) setBadge('ntu-pill', 'ACCEPTABLE', 'safe');
+                else setBadge('ntu-pill', 'DANGEROUS', 'danger');
 
-                const ntuHwStatus = document.getElementById('ntu-hw-status');
-                if (ntuHwStatus) {
-                    ntuHwStatus.textContent = turbidityStatus.toUpperCase();
-                    ntuHwStatus.className = turbidityStatus.toUpperCase() === 'WORKING' ? 'status-badge status-working' : 'status-badge status-action';
+                const ntuStatusLabel = document.getElementById('ntu-status-label');
+                if (ntuStatusLabel) {
+                    ntuStatusLabel.textContent = turbidityStatus;
+                    ntuStatusLabel.style.color = turbidityStatus === 'WORKING' ? '#34d399' : '#fbbf24';
                 }
 
-                const ntuClarity = document.getElementById('ntu-clarity');
-                if (ntuClarity) {
-                    ntuClarity.textContent = turbidityClarity.toUpperCase();
-                }
-
-                const ntuGauge = document.getElementById('ntu-gauge-bar');
-                if (ntuGauge) {
-                    let pct = Math.max(0, Math.min(100, (currentNTU / 50) * 100));
-                    ntuGauge.style.width = pct + '%';
+                const tblNtuVal = document.getElementById('tbl-ntu-val');
+                if (tblNtuVal) tblNtuVal.textContent = currentNTU.toFixed(1);
+                const tblNtuStatus = document.getElementById('tbl-ntu-status');
+                if (tblNtuStatus) {
+                    tblNtuStatus.textContent = turbidityStatus.toUpperCase();
+                    tblNtuStatus.className = turbidityStatus === 'WORKING' ? 'status-badge status-badge-safe' : 'status-badge status-badge-warn';
                 }
             }
 
-            // TDS Card
+            // TDS
             const tdsValEl = document.getElementById('tds-val');
-            if (tdsValEl && currentTDS !== null) {
+            if (tdsValEl) {
                 tdsValEl.textContent = currentTDS.toFixed(1);
-                if (currentTDS <= 500) setPillText('tds-pill', 'EXCELLENT', 'pill-safe');
-                else if (currentTDS <= 1000) setPillText('tds-pill', 'ACCEPTABLE', 'pill-warn');
-                else setPillText('tds-pill', 'DANGEROUS', 'pill-danger');
-
-                const tdsHwStatus = document.getElementById('tds-hw-status');
-                if (tdsHwStatus) {
-                    tdsHwStatus.textContent = tdsStatus.toUpperCase();
-                    tdsHwStatus.className = tdsStatus.toUpperCase() === 'WORKING' ? 'status-badge status-working' : 'status-badge status-action';
-                }
+                if (currentTDS <= 500) setBadge('tds-pill', 'EXCELLENT', 'safe');
+                else if (currentTDS <= 1000) setBadge('tds-pill', 'ACCEPTABLE', 'warn');
+                else setBadge('tds-pill', 'DANGEROUS', 'danger');
 
                 const tdsVoltLabel = document.getElementById('tds-volt-label');
-                if (tdsVoltLabel) {
-                    tdsVoltLabel.textContent = (tdsVoltage !== null ? tdsVoltage.toFixed(2) + 'V' : '') + ' | Cal: ' + tdsCalFactor;
-                }
+                if (tdsVoltLabel) tdsVoltLabel.textContent = tdsVoltage.toFixed(2) + ' V';
 
-                const tdsGauge = document.getElementById('tds-gauge-bar');
-                if (tdsGauge) {
-                    let pct = Math.max(0, Math.min(100, (currentTDS / 2000) * 100));
-                    tdsGauge.style.width = pct + '%';
-                }
+                const tblTdsVal = document.getElementById('tbl-tds-val');
+                if (tblTdsVal) tblTdsVal.textContent = currentTDS.toFixed(1);
+                const tblTdsVolt = document.getElementById('tbl-tds-volt');
+                if (tblTdsVolt) tblTdsVolt.textContent = tdsVoltage.toFixed(2) + ' V | Cal: ' + tdsCalFactor;
             }
 
-            // Power Rail & WQI
+            // Voltage & Connection
             const voltValEl = document.getElementById('volt-val');
-            if (voltValEl) {
-                voltValEl.textContent = phVoltage.toFixed(2) + ' V';
-            }
+            if (voltValEl) voltValEl.textContent = phVoltage.toFixed(2) + ' V';
 
             const voltSubtext = document.getElementById('volt-subtext');
-            if (voltSubtext) {
-                voltSubtext.textContent = `pH Rail: ${phVoltage.toFixed(2)}V | TDS Rail: ${tdsVoltage.toFixed(2)}V`;
-            }
+            if (voltSubtext) voltSubtext.textContent = `pH Rail: ${phVoltage.toFixed(2)} V | TDS Rail: ${tdsVoltage.toFixed(2)} V`;
 
             const wqiLabel = document.getElementById('wqi-label');
-            if (wqiLabel) {
-                wqiLabel.textContent = `Firebase Stream | WQI: ${wqiVal} (${overallStatus.toUpperCase()})`;
-            }
-        }
-
-        function logAlert(msg) {
-            const time = new Date().toLocaleTimeString();
-            alertLog.unshift({ time, msg });
-            if (alertLog.length > 50) alertLog.pop();
-
-            const logContainer = document.getElementById('alert-history-log');
-            if (logContainer) {
-                logContainer.textContent = '';
-                alertLog.forEach(lg => {
-                    const item = document.createElement('div');
-                    item.className = 'log-item';
-                    const timeSpan = document.createElement('span');
-                    timeSpan.className = 'log-time';
-                    timeSpan.textContent = lg.time;
-                    const msgSpan = document.createElement('span');
-                    msgSpan.style.color = 'var(--danger)';
-                    msgSpan.textContent = lg.msg;
-                    item.appendChild(timeSpan);
-                    item.appendChild(msgSpan);
-                    logContainer.appendChild(item);
-                });
-            }
-            const alertFreqEl = document.getElementById('alert-freq');
-            if (alertFreqEl) alertFreqEl.textContent = alertLog.length + ' flags';
+            if (wqiLabel) wqiLabel.textContent = `Stream: Online | WQI: ${wqiVal}`;
         }
 
         function handleAlerts(tds, ntu, ph, temp) {
@@ -1284,94 +890,14 @@
             const isNtuHigh = (ntu !== null && ntu > 5);
 
             if (isTdsHigh || isNtuHigh || isPhUnsafe || isTempHigh) {
-                const issues = [];
-                if (isPhUnsafe) issues.push('pH: ' + ph.toFixed(1));
-                if (isTempHigh) issues.push('Temp: ' + temp.toFixed(1) + '°C');
-                if (isTdsHigh) issues.push('TDS: ' + tds.toFixed(0) + ' ppm');
-                if (isNtuHigh) issues.push('NTU: ' + ntu.toFixed(1));
-
-                const alertMsg = 'CRITICAL ALERT: Exceeded WHO Limits (' + issues.join(', ') + ')';
-                if (!banner.classList.contains('active')) {
-                    logAlert(alertMsg);
-                    triggerServerlessAlert(alertMsg);
-                }
                 banner.classList.add('active');
-                banner.textContent = '⚠️ DANGER: ' + alertMsg;
-                ovStatus.textContent = 'SYS_UNSAFE'; ovStatus.className = 'pill pill-danger';
+                ovStatus.textContent = 'Threshold Exceeded';
+                ovStatus.className = 'status-badge status-badge-danger';
             } else {
                 banner.classList.remove('active');
-                ovStatus.textContent = 'SYS_STABLE'; ovStatus.className = 'pill pill-safe';
+                ovStatus.textContent = 'System Normal';
+                ovStatus.className = 'status-badge status-badge-safe';
             }
-        }
-
-        function triggerServerlessAlert(msg) {
-            console.warn('SERVERLESS ALERT:', msg);
-        }
-
-        function renderAiResponse(aiRes) {
-            const aiDot = document.getElementById('ai-dot');
-            const aiText = document.getElementById('ai-text');
-            const riskT = document.getElementById('risk-text');
-            const riskSub = document.getElementById('ai-quick-text');
-            const trendTextEl = document.getElementById('trend-text');
-            const trendSubEl = document.getElementById('trend-sub');
-            const colorMap = { 'safe': 'var(--success)', 'warning': 'var(--warning)', 'danger': 'var(--danger)', 'error': 'var(--text-muted)' };
-            const color = colorMap[aiRes.status] || 'var(--text)';
-
-            if (aiDot) aiDot.classList.add('live');
-            if (aiText) aiText.textContent = 'AI Engine Online';
-
-            if (riskT) {
-                riskT.textContent = (aiRes.status === 'error' ? 'OFFLINE' : aiRes.status.toUpperCase());
-                riskT.style.color = color;
-            }
-            if (riskSub) {
-                const anomalyBadge = aiRes.anomaly ? `<span class="pill pill-danger" style="margin-right:8px;">ANOMALY</span>` : '';
-                riskSub.innerHTML = `${anomalyBadge}<span style="color:${color}">${aiRes.status === 'safe' ? 'Stable' : (aiRes.status === 'error' ? 'Fallback' : 'Alert')}:</span> ${aiRes.prediction} <br><span style="font-size: 0.8em; color: var(--text-muted);">(Confidence: ${aiRes.confidence}%)</span>`;
-            }
-            if (trendTextEl) {
-                trendTextEl.textContent = aiRes.trend === 'increasing' ? 'Tending Upwards' : (aiRes.trend === 'decreasing' ? 'Tending Downwards' : 'Stable Trend');
-                if (aiRes.trend === 'increasing') trendTextEl.style.color = aiRes.status === 'safe' ? 'var(--warning)' : 'var(--danger)';
-                else if (aiRes.trend === 'decreasing') trendTextEl.style.color = 'var(--success)';
-                else trendTextEl.style.color = 'var(--text)';
-            }
-            if (trendSubEl) {
-                trendSubEl.textContent = aiRes.trend === 'increasing' ? 'Gradual increase detected' : (aiRes.trend === 'decreasing' ? 'Improving water quality' : 'Minimal fluctuations detected across 4 sensors');
-            }
-        }
-
-        function localAnalyzeData({ tds, ntu, ph, temp, voltage }) {
-            const numTds = typeof tds === 'number' ? tds : 139.8;
-            const numNtu = typeof ntu === 'number' ? ntu : 0.0;
-            const numPh = typeof ph === 'number' ? ph : 7.07;
-            const numTemp = typeof temp === 'number' ? temp : 29.5;
-
-            let status = 'safe';
-            let anomaly = false;
-            let trend = 'stable';
-            let prediction = 'All 4 hardware sensors (pH, Temp, NTU, TDS) indicate optimal water quality.';
-            let confidence = 95;
-
-            const isPhUnsafe = (numPh < 6.5 || numPh > 8.5);
-            const isTempHigh = (numTemp > 35);
-            const isTdsHigh = (numTds > 1000);
-            const isNtuHigh = (numNtu > 5);
-
-            if (isTdsHigh || isNtuHigh || isPhUnsafe || isTempHigh) {
-                status = 'danger';
-                anomaly = true;
-                prediction = 'Critical alert: Threshold breach on 4-sensor grid.';
-                confidence = 96;
-            } else if (numTds > 500 || numNtu > 2 || numPh < 6.8 || numPh > 8.2 || numTemp > 30) {
-                status = 'warning';
-                prediction = 'Warning: Water parameters near upper WHO/BIS limits.';
-                confidence = 88;
-            }
-
-            if (numTds > 800) trend = 'increasing';
-            else if (numTds < 200) trend = 'decreasing';
-
-            return { status, anomaly, trend, prediction, confidence };
         }
 
         function saveLocalRecord(record) {
@@ -1381,37 +907,33 @@
                 list.push(record);
                 if (list.length > 200) list.shift();
                 localStorage.setItem('hydracure_local_history', JSON.stringify(list));
-            } catch (e) {
-                console.warn('Local save fail', e);
-            }
+            } catch (e) {}
         }
 
         function loadLocalHistory() {
             try {
                 const stored = localStorage.getItem('hydracure_local_history');
                 return stored ? JSON.parse(stored) : [];
-            } catch (e) {
-                return [];
-            }
+            } catch (e) { return []; }
         }
 
-        // Mini Sparkline Chart
+        // Mini Live Chart
         const miniCtxEl = document.getElementById('miniLiveChart');
         let miniChart;
         if (miniCtxEl) {
             miniChart = new Chart(miniCtxEl.getContext('2d'), {
                 type: 'line',
                 data: { labels: [], datasets: [
-                    { label: 'TDS (ppm)', borderColor: '#00e5ff', borderWidth: 2, pointRadius: 0, data: [] }, 
-                    { label: 'NTU', borderColor: '#ffcc00', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y1' },
-                    { label: 'pH', borderColor: '#ff007f', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y2' },
-                    { label: 'Temp (°C)', borderColor: '#ff9f1c', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y3' }
+                    { label: 'TDS (ppm)', borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, data: [] }, 
+                    { label: 'NTU', borderColor: '#10b981', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y1' },
+                    { label: 'pH', borderColor: '#ec4899', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y2' },
+                    { label: 'Temp (°C)', borderColor: '#f59e0b', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y3' }
                 ] },
                 options: { 
                     animation: false, 
                     scales: { x: { display: false }, y: { display: false }, y1: { display: false }, y2: { display: false }, y3: { display: false } }, 
                     plugins: { 
-                        legend: { display: true, position: 'top', align: 'end', labels: { color: '#a1a1aa', boxWidth: 10, font: { size: 10 } } } 
+                        legend: { display: true, position: 'top', align: 'end', labels: { color: '#9ca3af', boxWidth: 8, font: { size: 10 } } } 
                     }, 
                     maintainAspectRatio: false 
                 }
@@ -1421,8 +943,6 @@
         function processNewData() {
             updateSensorCards();
             updateMetalsUI();
-            updateDataBars();
-
             handleAlerts(currentTDS, currentNTU, currentPH, currentTemp);
 
             const now = Date.now();
@@ -1434,7 +954,6 @@
             saveLocalRecord(record);
 
             updateCharts(timeLabel);
-            renderAiResponse(localAnalyzeData(record));
         }
 
         function updateCharts(timeLabel) {
@@ -1469,11 +988,7 @@
 
         window.loadHistoricalAndGenerateInsights = async function () {
             fullHistory = loadLocalHistory();
-            if (!fullHistory || fullHistory.length === 0) {
-                const riskSub = document.getElementById('ai-quick-text');
-                if (riskSub) riskSub.innerHTML = '<span style="color:var(--warning)">Awaiting 4-sensor live stream data...</span>';
-                return;
-            }
+            if (!fullHistory || fullHistory.length === 0) return;
 
             let labels = fullHistory.slice(-100).map(d => new Date(d.timestamp).toLocaleTimeString());
             let tData = fullHistory.slice(-100).map(d => d.tds);
@@ -1481,15 +996,12 @@
             let pData = fullHistory.slice(-100).map(d => d.ph || 7.07);
             let tmpData = fullHistory.slice(-100).map(d => d.temp || 29.5);
 
-            const getSegmentColor = (thresh) => (ctx) => ctx.p0DataIndex !== undefined && (ctx.p0.parsed.y > thresh || ctx.p1.parsed.y > thresh) ? '#ff3366' : '#00e5ff';
-            const getSegmentColorNTU = (thresh) => (ctx) => ctx.p0DataIndex !== undefined && (ctx.p0.parsed.y > thresh || ctx.p1.parsed.y > thresh) ? '#ff3366' : '#00ffcc';
-
             if (window.tdsChart) window.tdsChart.destroy();
             const tdsCanvas = document.getElementById('mainTdsChart');
             if (tdsCanvas) {
                 window.tdsChart = new Chart(tdsCanvas, {
-                    type: 'line', data: { labels, datasets: [{ label: 'TDS', data: tData, segment: { borderColor: getSegmentColor(1000) }, borderWidth: 2, pointRadius: 1 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
+                    type: 'line', data: { labels, datasets: [{ label: 'TDS (ppm)', data: tData, borderColor: '#2563eb', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } }, maintainAspectRatio: false }
                 });
             }
 
@@ -1497,8 +1009,8 @@
             const ntuCanvas = document.getElementById('mainNtuChart');
             if (ntuCanvas) {
                 window.ntuChart = new Chart(ntuCanvas, {
-                    type: 'line', data: { labels, datasets: [{ label: 'NTU', data: nData, segment: { borderColor: getSegmentColorNTU(5) }, borderWidth: 2, pointRadius: 1 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
+                    type: 'line', data: { labels, datasets: [{ label: 'NTU', data: nData, borderColor: '#10b981', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } }, maintainAspectRatio: false }
                 });
             }
 
@@ -1506,8 +1018,8 @@
             const phCanvas = document.getElementById('mainPhChart');
             if (phCanvas) {
                 window.phChart = new Chart(phCanvas, {
-                    type: 'line', data: { labels, datasets: [{ label: 'pH', data: pData, borderColor: '#ff007f', borderWidth: 2, pointRadius: 1 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 4, max: 10, grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
+                    type: 'line', data: { labels, datasets: [{ label: 'pH', data: pData, borderColor: '#ec4899', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 4, max: 10, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } }, maintainAspectRatio: false }
                 });
             }
 
@@ -1515,17 +1027,15 @@
             const tempCanvas = document.getElementById('mainTempChart');
             if (tempCanvas) {
                 window.tempChart = new Chart(tempCanvas, {
-                    type: 'line', data: { labels, datasets: [{ label: 'Temp (°C)', data: tmpData, borderColor: '#ff9f1c', borderWidth: 2, pointRadius: 1 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 10, max: 45, grid: { color: '#ffffff10' }, ticks: { color: '#888' } }, x: { grid: { display: false }, ticks: { color: '#888' } } }, maintainAspectRatio: false }
+                    type: 'line', data: { labels, datasets: [{ label: 'Temp (°C)', data: tmpData, borderColor: '#f59e0b', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 10, max: 45, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } }, maintainAspectRatio: false }
                 });
             }
 
             const len = fullHistory.length;
             let sumTDS = 0, sumPH = 0, sumTemp = 0, maxNTU = 0, safeC = 0;
             fullHistory.forEach(d => {
-                sumTDS += d.tds;
-                sumPH += (d.ph || 7.07);
-                sumTemp += (d.temp || 29.5);
+                sumTDS += d.tds; sumPH += (d.ph || 7.07); sumTemp += (d.temp || 29.5);
                 if (d.ntu > maxNTU) maxNTU = d.ntu;
                 if (d.tds <= 500 && d.ntu <= 5 && (d.ph >= 6.5 && d.ph <= 8.5) && (d.temp <= 30)) safeC++;
             });
@@ -1536,84 +1046,50 @@
             document.getElementById('rep-max-ntu').textContent = maxNTU.toFixed(1);
             const safePct = (safeC / len) * 100;
             document.getElementById('rep-safe-pct').textContent = safePct.toFixed(1) + '%';
-
-            if (safePct < 50) document.getElementById('rep-safe-pct').style.color = '#ff3366';
-            else if (safePct < 85) document.getElementById('rep-safe-pct').style.color = '#ffcc00';
-            else document.getElementById('rep-safe-pct').style.color = '#00ffcc';
-
-            if (len > 0) {
-                renderAiResponse(localAnalyzeData(fullHistory[len - 1]));
-            }
         };
 
         function updateLiveConnection() {
             document.getElementById('live-dot').classList.add('live');
-            document.getElementById('live-text').textContent = 'Realtime Stream Active';
+            document.getElementById('live-text').textContent = 'Stream Active';
             document.getElementById('conn-status').textContent = 'Active';
         }
 
         let firebaseListeners = [];
 
         function startFirebase() {
-            // 1. Listen for /ph node
+            // /ph
             const unsubPh = onValue(ref(db, "/ph"), snap => {
                 const d = snap.val(); if (!d) return;
                 if (typeof d === 'object') {
                     currentPH = parseFloat(d.ph ?? d.value ?? 7.07);
                     if (d.status) phStatus = d.status;
                     if (d.voltage !== undefined) phVoltage = parseFloat(d.voltage);
-                } else {
-                    currentPH = parseFloat(d);
-                }
-                updateSparkline();
-                updateLiveConnection();
-                processNewData();
+                } else { currentPH = parseFloat(d); }
+                updateSparkline(); updateLiveConnection(); processNewData();
             });
 
-            // 2. Listen for /temperature node (matches user schema!)
+            // /temperature
             const unsubTemp = onValue(ref(db, "/temperature"), snap => {
                 const d = snap.val(); if (!d) return;
                 if (typeof d === 'object') {
                     currentTemp = parseFloat(d.celsius ?? d.temp ?? d.temperature ?? d.value ?? 29.5);
                     if (d.status) tempStatus = d.status;
-                } else {
-                    currentTemp = parseFloat(d);
-                }
-                updateSparkline();
-                updateLiveConnection();
-                processNewData();
+                } else { currentTemp = parseFloat(d); }
+                updateSparkline(); updateLiveConnection(); processNewData();
             });
 
-            // Also fallback listen for /temp
-            const unsubTempAlt = onValue(ref(db, "/temp"), snap => {
-                const d = snap.val(); if (!d) return;
-                if (typeof d === 'object') {
-                    currentTemp = parseFloat(d.celsius ?? d.temp ?? d.temperature ?? d.value ?? 29.5);
-                    if (d.status) tempStatus = d.status;
-                } else {
-                    currentTemp = parseFloat(d);
-                }
-                updateSparkline();
-                updateLiveConnection();
-                processNewData();
-            });
-
-            // 3. Listen for /turbidity node (matches user schema!)
+            // /turbidity
             const unsubNtu = onValue(ref(db, "/turbidity"), snap => {
                 const d = snap.val(); if (!d) return;
                 if (typeof d === 'object') {
                     currentNTU = parseFloat(d.ntu ?? d.turbidity ?? d.value ?? 0);
                     if (d.clarity) turbidityClarity = d.clarity;
                     if (d.status) turbidityStatus = d.status;
-                } else {
-                    currentNTU = parseFloat(d);
-                }
-                updateSparkline();
-                updateLiveConnection();
-                processNewData();
+                } else { currentNTU = parseFloat(d); }
+                updateSparkline(); updateLiveConnection(); processNewData();
             });
 
-            // 4. Listen for /tds node (matches user schema!)
+            // /tds
             const unsubTds = onValue(ref(db, "/tds"), snap => {
                 const d = snap.val(); if (!d) return;
                 if (typeof d === 'object') {
@@ -1622,15 +1098,11 @@
                     if (d.status) tdsStatus = d.status;
                     if (d.voltage !== undefined) tdsVoltage = parseFloat(d.voltage);
                     if (d.current_cal_factor !== undefined) tdsCalFactor = parseFloat(d.current_cal_factor);
-                } else {
-                    currentTDS = parseFloat(d);
-                }
-                updateSparkline();
-                updateLiveConnection();
-                processNewData();
+                } else { currentTDS = parseFloat(d); }
+                updateSparkline(); updateLiveConnection(); processNewData();
             });
 
-            // 5. Listen for /system node (matches user schema!)
+            // /system
             const unsubSystem = onValue(ref(db, "/system"), snap => {
                 const d = snap.val(); if (!d) return;
                 if (typeof d === 'object') {
@@ -1640,7 +1112,7 @@
                 updateSensorCards();
             });
 
-            // 6. Listen for /status node (matches user schema!)
+            // /status
             const unsubStatus = onValue(ref(db, "/status"), snap => {
                 const d = snap.val(); if (!d) return;
                 if (typeof d === 'object') {
@@ -1650,19 +1122,7 @@
                 updateSensorCards();
             });
 
-            // 7. Fallback listen to combined /sensors node if used
-            const unsubSensors = onValue(ref(db, "/sensors"), snap => {
-                const d = snap.val(); if (!d) return;
-                if (d.ph !== undefined) currentPH = parseFloat(d.ph);
-                if (d.temp !== undefined || d.celsius !== undefined) currentTemp = parseFloat(d.celsius ?? d.temp);
-                if (d.turbidity !== undefined || d.ntu !== undefined) currentNTU = parseFloat(d.turbidity ?? d.ntu);
-                if (d.tds !== undefined) currentTDS = parseFloat(d.tds);
-                updateSparkline();
-                updateLiveConnection();
-                processNewData();
-            });
-
-            firebaseListeners = [unsubPh, unsubTemp, unsubTempAlt, unsubNtu, unsubTds, unsubSystem, unsubStatus, unsubSensors];
+            firebaseListeners = [unsubPh, unsubTemp, unsubNtu, unsubTds, unsubSystem, unsubStatus];
         }
 
         function stopFirebase() {
@@ -1670,50 +1130,16 @@
             firebaseListeners = [];
         }
 
-        // Demo Engine (Simulates 4 Hardware Sensors)
+        // Demo Mode
         let demoMode = false;
         let demoInterval = null;
-        let demoStateIndex = 0;
-        let demoTicks = 0;
-        const demoStates = ['SAFE', 'MODERATE', 'DANGEROUS'];
 
         function runDemoFrame() {
-            demoTicks++;
-            if (demoTicks % 10 === 0) {
-                demoStateIndex = (demoStateIndex + 1) % demoStates.length;
-            }
-
-            const state = demoStates[demoStateIndex];
-            let tTarget = 140.0, nTarget = 0.0, pTarget = 7.07, tmpTarget = 29.5;
-            if (state === 'SAFE') {
-                tTarget = 120 + Math.random() * 80;
-                nTarget = 0.0 + Math.random() * 0.5;
-                pTarget = 7.0 + (Math.random() - 0.5) * 0.4;
-                tmpTarget = 27.0 + Math.random() * 3.0;
-                turbidityStatus = "WORKING";
-                systemAlert = null;
-            } else if (state === 'MODERATE') {
-                tTarget = 450 + Math.random() * 250;
-                nTarget = 3.5 + Math.random() * 2.5;
-                pTarget = 6.3 + (Math.random() - 0.5) * 0.6;
-                tmpTarget = 31.0 + Math.random() * 3.0;
-                turbidityStatus = "INSERT INTO WATER";
-                systemAlert = "INSERT TURBIDITY SENSOR INTO WATER";
-            } else if (state === 'DANGEROUS') {
-                tTarget = 1100 + Math.random() * 400;
-                nTarget = 12.0 + Math.random() * 10.0;
-                pTarget = 5.2 + (Math.random() - 0.5) * 1.5;
-                tmpTarget = 37.0 + Math.random() * 5.0;
-                turbidityStatus = "WORKING";
-                systemAlert = "CRITICAL: HIGH TDS AND NTU DETECTED";
-            }
-
-            currentTDS += (tTarget - currentTDS) * 0.2;
-            currentNTU += (nTarget - currentNTU) * 0.2;
-            currentPH += (pTarget - currentPH) * 0.2;
-            currentTemp += (tmpTarget - currentTemp) * 0.2;
-            phVoltage = 2.65 + (Math.random() - 0.5) * 0.05;
-            tdsVoltage = 0.29 + (Math.random() - 0.5) * 0.02;
+            currentTDS = 135 + Math.random() * 10;
+            currentNTU = 0.0 + Math.random() * 0.2;
+            currentPH = 7.05 + (Math.random() - 0.5) * 0.1;
+            currentTemp = 29.2 + Math.random() * 0.6;
+            phVoltage = 2.65; tdsVoltage = 0.29;
 
             updateSparkline();
             processNewData();
@@ -1728,24 +1154,23 @@
             const lDot = document.getElementById('live-dot');
 
             if (demoMode) {
-                btn.style.background = 'var(--primary)';
-                btn.style.color = '#000';
-                document.getElementById('demo-text').textContent = 'Demo Mode Active';
+                btn.style.background = '#2563eb';
+                btn.style.color = '#ffffff';
+                document.getElementById('demo-btn').textContent = 'Demo Active';
                 ind.style.display = 'block';
-                lText.textContent = 'Simulating 4 Hardware Sensors';
-                lDot.style.background = 'var(--warning)';
-                lDot.style.boxShadow = '0 0 8px var(--warning)';
+                lText.textContent = 'Simulating Sensors';
+                lDot.style.background = '#f59e0b';
 
                 stopFirebase();
                 currentTDS = 139.81; currentNTU = 0.0; currentPH = 7.07; currentTemp = 29.5;
                 runDemoFrame();
                 demoInterval = setInterval(runDemoFrame, 3000);
             } else {
-                btn.style.background = 'rgba(255,255,255,0.05)';
+                btn.style.background = '#1f2937';
                 btn.style.color = 'white';
-                document.getElementById('demo-text').textContent = 'Demo Mode';
+                document.getElementById('demo-btn').textContent = 'Toggle Demo Mode';
                 ind.style.display = 'none';
-                lDot.style.background = 'var(--danger)'; lDot.style.boxShadow = 'none';
+                lDot.style.background = '#ef4444';
                 lText.textContent = 'Waiting for Stream...';
 
                 clearInterval(demoInterval);
@@ -1764,11 +1189,7 @@
             liveHistory.temp.push(currentTemp);
 
             if (liveHistory.ts.length > 12) { 
-                liveHistory.ts.shift(); 
-                liveHistory.tds.shift(); 
-                liveHistory.ntu.shift(); 
-                liveHistory.ph.shift();
-                liveHistory.temp.shift();
+                liveHistory.ts.shift(); liveHistory.tds.shift(); liveHistory.ntu.shift(); liveHistory.ph.shift(); liveHistory.temp.shift();
             }
             
             miniChart.data.labels = liveHistory.ts;
@@ -1777,36 +1198,6 @@
             if (miniChart.data.datasets[2]) miniChart.data.datasets[2].data = liveHistory.ph;
             if (miniChart.data.datasets[3]) miniChart.data.datasets[3].data = liveHistory.temp;
             miniChart.update();
-        }
-
-        function updateDataBars() {
-            const rawPhBar = document.getElementById('raw-ph-bar');
-            const rawPhVal = document.getElementById('raw-ph-val');
-            if (currentPH !== null) {
-                if (rawPhBar) rawPhBar.style.width = Math.min((currentPH / 14) * 100, 100) + '%';
-                if (rawPhVal) rawPhVal.textContent = currentPH.toFixed(2);
-            }
-
-            const rawTempBar = document.getElementById('raw-temp-bar');
-            const rawTempVal = document.getElementById('raw-temp-val');
-            if (currentTemp !== null) {
-                if (rawTempBar) rawTempBar.style.width = Math.min((currentTemp / 50) * 100, 100) + '%';
-                if (rawTempVal) rawTempVal.textContent = currentTemp.toFixed(1) + ' °C';
-            }
-
-            const rawNtuBar = document.getElementById('raw-ntu-bar');
-            const rawNtuVal = document.getElementById('raw-ntu-val');
-            if (currentNTU !== null) {
-                if (rawNtuBar) rawNtuBar.style.width = Math.min((currentNTU / 100) * 100, 100) + '%';
-                if (rawNtuVal) rawNtuVal.textContent = currentNTU.toFixed(1);
-            }
-
-            const rawTdsBar = document.getElementById('raw-tds-bar');
-            const rawTdsVal = document.getElementById('raw-tds-val');
-            if (currentTDS !== null) {
-                if (rawTdsBar) rawTdsBar.style.width = Math.min((currentTDS / 2000) * 100, 100) + '%';
-                if (rawTdsVal) rawTdsVal.textContent = currentTDS.toFixed(1);
-            }
         }
 
         function updateMetalsUI() {
@@ -1821,11 +1212,11 @@
                 el.textContent = val.toFixed(2);
                 
                 if (val < (limit * 0.4)) { 
-                    pill.textContent = 'SAFE'; pill.className = 'pill pill-safe'; 
+                    setBadge(id + '-pill', 'SAFE', 'safe');
                 } else if (val < limit) { 
-                    pill.textContent = 'ACCEPTABLE'; pill.className = 'pill pill-warn'; 
+                    setBadge(id + '-pill', 'ACCEPTABLE', 'warn');
                 } else { 
-                    pill.textContent = 'DANGEROUS'; pill.className = 'pill pill-danger'; 
+                    setBadge(id + '-pill', 'DANGEROUS', 'danger');
                 }
             };
             setMetal('metal-pb', currentLead, 10.0);
@@ -1838,7 +1229,7 @@
             if (!tt) return;
             document.getElementById("tt-area").textContent = area; document.getElementById("tt-status").textContent = status;
             document.getElementById("tt-tds").textContent = tds; document.getElementById("tt-ntu").textContent = ntu;
-            const colors = { safe: "var(--success)", warn: "var(--warning)", danger: "var(--danger)" };
+            const colors = { safe: "#10b981", warn: "#f59e0b", danger: "#ef4444" };
             document.getElementById("tt-status").style.color = colors[type] || "white";
             const rect = document.querySelector('.map-svg-wrap').getBoundingClientRect();
             tt.style.left = (e.clientX - rect.left + 16) + 'px'; tt.style.top = (e.clientY - rect.top - 20) + 'px';
