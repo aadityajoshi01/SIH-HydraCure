@@ -2,6 +2,22 @@
 
 HydraCure is a practical IoT-based system built to monitor water quality in real time and make the results easy to understand. Instead of just showing raw sensor values, it analyzes the data and tells whether the water is safe, moderate, or unsafe.
 
+## Dashboard Screenshots
+
+### 1. Water Quality Overview Dashboard
+![Dashboard Overview](dashboard_overview.png)
+
+### 2. Analytics & Historical Trends
+![Analytics and Trends](dashboard_analytics.png)
+
+### 3. Reports Hub & Compliance
+![Reports Hub](dashboard_reports.png)
+
+### 4. Geospatial Monitoring Grid
+![Geospatial Grid](dashboard_map.png)
+
+---
+
 The idea behind this project is simple: water contamination is often invisible, and by the time people notice it, the damage is already done. HydraCure aims to solve that by continuously tracking key parameters and giving instant feedback.
 
 ## What the project does
