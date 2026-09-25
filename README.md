@@ -1,120 +1,90 @@
 # HydraCure – Smart Water Quality Monitoring System
 
-HydraCure is a practical IoT-based system built to monitor water quality in real time and make the results easy to understand. Instead of just showing raw sensor values, it analyzes the data and tells whether the water is safe, moderate, or unsafe.
+HydraCure is a practical water-quality monitoring system built to track critical parameters such as pH, temperature, turbidity, and TDS, then present the readings through a web dashboard and a Python-based ML inference layer.
 
-## Dashboard Screenshots
+## Architecture
 
-### 1. Water Quality Overview Dashboard
-![Dashboard Overview](dashboard_overview.png)
+```text
+Frontend (Netlify)  --->  Backend (Node.js/Express)  --->  Python ML service
+      |                              |                           |
+      |-- static dashboard           |-- REST API                 |-- joblib models
+      |                              |-- CSV data store          |-- Firebase listener
+      |                              |-- analysis logic
+```
 
-### 2. Analytics & Historical Trends
-![Analytics and Trends](dashboard_analytics.png)
+## Components
 
-### 3. Reports Hub & Compliance
-![Reports Hub](dashboard_reports.png)
+### Frontend
+- Static HTML/CSS/JS site deployed on Netlify
+- Base directory: `frontend`
+- Publish directory: `.`
+- Communicates with the backend via `API_BASE_URL`
 
-### 4. Geospatial Monitoring Grid
-![Geospatial Grid](dashboard_map.png)
+### Backend
+- Node.js + Express API service
+- Exposes REST endpoints for health checks, data ingestion, analysis, and CSV export
+- Reads and writes backend data files from `backend/data/`
 
----
+### ML
+- Python inference service running independently from Node
+- Loads machine learning models from `backend/HydraCure ML/`
+- Can run via `python inference_bridge.py` from the backend directory
 
-The idea behind this project is simple: water contamination is often invisible, and by the time people notice it, the damage is already done. HydraCure aims to solve that by continuously tracking key parameters and giving instant feedback.
+## Communication flow
 
-## What the project does
+- The frontend reads `API_BASE_URL` from `frontend/js/config.js`
+- Frontend requests data from the deployed backend URL
+- Backend validates input and responds with JSON
+- Python inference can run separately and communicate with Firebase or local APIs as configured
 
-The system collects data from water quality sensors and processes it to determine the condition of the water. It does not stop at measurement — it interprets the data and can even take action when needed.
+## Frontend deployment (Netlify)
 
-### Main features include:
-* **Real-time monitoring** of water quality
-* **Conversion of sensor data** into meaningful status (safe/unsafe)
-* **Display of data** on an LCD and/or interface
-* **Automatic response** (like triggering a relay when water is unsafe)
-* **Basic tracking** of readings for analysis
+1. Connect the GitHub repository to Netlify.
+2. Set Base directory to `frontend`.
+3. Leave the build command empty.
+4. Set Publish directory to `.`.
+5. Update `frontend/js/config.js` to point at the deployed backend domain.
 
-## Core idea
+## Backend deployment
 
-Most people cannot judge water quality just by looking at it. This system removes that guesswork.
+Deploy the backend separately on a Node.js-capable host (Render, Railway, Heroku, Azure App Service, etc.).
 
-HydraCure continuously reads sensor data, processes it, and classifies water quality. If the quality drops below a safe level, the system alerts the user and can also trigger a hardware response.
+Set the environment variable:
 
-## System architecture
+- `FRONTEND_URL=https://your-netlify-site.netlify.app`
+- `PORT=8000`
 
-The project is divided into two main parts:
+Then point `API_BASE_URL` in the frontend to the backend domain.
 
-### 1. Hardware (IoT Layer)
-* **ESP32 microcontroller**
-* **pH sensor** (measures acidity/alkalinity level)
-* **Temperature sensor** (measures water temperature in °C)
-* **Turbidity sensor** (measures clarity / cloudiness in NTU)
-* **TDS sensor** (measures total dissolved solids in ppm / mg/L)
-* **Relay module** (for control actions)
-* **LCD display** (for local output)
+## Local development
 
-### 2. Software Layer
-* Embedded logic for processing 4-sensor hardware values
-* Water quality classification logic adhering to WHO & BIS standards
-* Interactive real-time web dashboard
-* Machine learning toxicity assessment & trace metal correlation module
+### Frontend
+Open `frontend/index.html` directly in a browser, or serve the folder with a static file server.
 
-## Project structure
+### Node backend
+```bash
+cd backend
+npm install
+npm start
+```
 
-* `HydraCure ML/` → contains data processing or ML-related work
-* `hydracure update/` → contains main IoT code and application logic
+### Python ML service
+```bash
+cd backend
+pip install -r requirements.txt
+python inference_bridge.py
+```
 
-## Parameters measured (4 Physical Hardware Sensors)
+## Existing API endpoints
 
-* **pH Level** – indicates water acidity/alkalinity (WHO & BIS safe limit: 6.5 – 8.5)
-* **Temperature** – tracks thermal conditions (WHO & BIS ideal: < 30°C, max: 35°C)
-* **Turbidity** – indicates water clarity/cloudiness (WHO: < 5 NTU, BIS: < 1 NTU ideal)
-* **TDS (Total Dissolved Solids)** – indicates dissolved substance concentration (WHO: < 600 ppm, BIS: < 500 ppm)
+- `GET /api/health`
+- `POST /api/sensor-data`
+- `POST /api/analyze`
+- `GET /api/data`
+- `GET /api/export`
 
-These 4 parameters are analyzed continuously to evaluate overall water safety.
+## Notes
 
-## Water quality logic
-
-The system classifies water into three categories:
-1. **Safe** – normal levels, water is usable
-2. **Moderate** – not ideal, but not critical
-3. **Unsafe** – requires immediate attention
-
-When water becomes unsafe, the system can trigger a relay or alert the user.
-
-## Tech stack
-* **ESP32** (IoT hardware)
-* **Arduino/C++** for microcontroller programming
-* **HTML, CSS, JavaScript** for frontend
-* **Firebase** (optional)
-* **Machine Learning** (Python/Scikit-learn in HydraCure ML folder)
-
-## How to run
-
-### 1-Click Startup & Shutdown (Recommended)
-- **Start**: Double-click `start.bat` in the root folder to launch the ML Inference Engine, web server, and open the dashboard at `http://localhost:8000`.
-- **Stop**: Double-click `stop.bat` to gracefully terminate all active background processes and release server ports.
-
-### Manual Setup
-1. **Setup the hardware**: Connect sensors to ESP32 as per the circuit diagram.
-2. **Upload Code**: Open the Arduino IDE and upload the code from the project folder.
-3. **Run Server**: Run `npm start` or `node server.js`
-4. **Run ML module**: Run `python inference_bridge.py` or `.venv\Scripts\python.exe inference_bridge.py`
-
-## Important notes
-* **Do not upload sensitive files** like `service_key.json`
-* **Calibrate sensors** properly before testing
-* System should handle missing sensors gracefully
-
-## Use cases
-* Household water safety monitoring
-* Hostels and college campuses
-* Rural water quality tracking
-* Small-scale smart infrastructure
-
-## Future improvements
-* Mobile app integration
-* Cloud-based dashboard
-* Advanced prediction using machine learning
-* Location-based water monitoring
-
----
-**Final note:**
-HydraCure focuses on making water quality easy to monitor and understand. The goal is not just to collect data, but to make it useful in real-world situations.
+- Keep all backend files and private model/data assets inside `backend/`.
+- Do not expose secrets or credentials in the frontend.
+- Use `backend/.env.example` as the template for production values.
