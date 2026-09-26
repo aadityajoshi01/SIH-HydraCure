@@ -9,15 +9,15 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-color: #111827;
-            --panel-bg: #1f2937;
-            --panel-border: #374151;
-            --text-main: #f9fafb;
-            --text-sub: #9ca3af;
+            --bg-color: #f1f5f9;
+            --panel-bg: #ffffff;
+            --panel-border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
             --accent-blue: #2563eb;
-            --safe-color: #10b981;
-            --warn-color: #f59e0b;
-            --danger-color: #ef4444;
+            --safe-color: #059669;
+            --warn-color: #b45309;
+            --danger-color: #dc2626;
             --sidebar-width: 240px;
         }
 
@@ -38,18 +38,18 @@
 
         /* Top Critical Alert Bar */
         .alert-banner {
-            position: fixed;
+            position: sticky;
             top: 0;
-            left: var(--sidebar-width);
-            right: 0;
+            flex-shrink: 0;
             padding: 10px 20px;
-            background-color: var(--danger-color);
+            background-color: #dc2626;
             color: #ffffff;
             font-weight: 600;
             font-size: 0.88rem;
             text-align: center;
             display: none;
-            z-index: 1000;
+            z-index: 800;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
         }
 
         .alert-banner.active {
@@ -59,11 +59,12 @@
         /* Sidebar Navigation */
         .sidebar {
             width: var(--sidebar-width);
-            background-color: #111827;
+            background-color: #ffffff;
             border-right: 1px solid var(--panel-border);
             display: flex;
             flex-direction: column;
             padding: 20px 14px;
+            flex-shrink: 0;
         }
 
         .brand-header {
@@ -84,7 +85,7 @@
         .brand-title {
             font-size: 1.15rem;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--text-main);
         }
 
         .brand-title span {
@@ -107,7 +108,7 @@
             background-color: var(--danger-color);
         }
 
-        .dot.active {
+        .dot.active, .dot.live {
             background-color: var(--safe-color);
         }
 
@@ -135,7 +136,7 @@
         }
 
         .nav-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: #f1f5f9;
             color: var(--text-main);
         }
 
@@ -154,9 +155,9 @@
         .demo-toggle-btn {
             width: 100%;
             padding: 9px;
-            background: #1f2937;
+            background: #f8fafc;
             border: 1px solid var(--panel-border);
-            color: #ffffff;
+            color: var(--text-main);
             border-radius: 6px;
             font-size: 0.82rem;
             font-weight: 600;
@@ -164,7 +165,7 @@
         }
 
         .demo-toggle-btn:hover {
-            background: #374151;
+            background: #e2e8f0;
         }
 
         /* Main Workspace */
@@ -184,7 +185,7 @@
         .page-title-text {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--text-main);
         }
 
         .page-subtitle-text {
@@ -202,28 +203,28 @@
         }
 
         .status-badge-safe {
-            background-color: rgba(16, 185, 129, 0.15);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
         }
 
         .status-badge-warn {
-            background-color: rgba(245, 158, 11, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
         }
 
         .status-badge-danger {
-            background-color: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
         }
 
         /* System Alert Box */
         .hardware-notice {
-            background-color: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: #fbbf24;
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #92400e;
             padding: 10px 14px;
             border-radius: 6px;
             margin-bottom: 20px;
@@ -260,8 +261,73 @@
             .grid-3 { grid-template-columns: repeat(2, 1fr); }
         }
 
+        @media (max-width: 900px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1200;
+                transform: translateX(-100%);
+                transition: transform 0.2s ease;
+                box-shadow: 4px 0 20px rgba(15, 23, 42, 0.12);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 1100; }
+            .sidebar-backdrop.show { display: block; }
+            .mobile-topbar { display: flex; }
+            .main-content { padding: 18px; }
+            .page-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .alert-banner { font-size: 0.78rem; }
+        }
+
         @media (max-width: 768px) {
             .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .mobile-topbar {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--panel-border);
+            padding: 10px 16px;
+        }
+
+        .hamburger-btn {
+            background: #f8fafc;
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-brand {
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .mobile-brand span {
+            color: var(--accent-blue);
+        }
+
+        .mobile-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            color: var(--text-sub);
         }
 
         /* Cards */
@@ -270,6 +336,7 @@
             border: 1px solid var(--panel-border);
             border-radius: 8px;
             padding: 18px;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
         }
 
         .card-label {
@@ -285,7 +352,7 @@
         .metric-value {
             font-size: 2.1rem;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--text-main);
             margin: 8px 0 4px;
         }
 
@@ -314,7 +381,7 @@
 
         .table-custom th {
             padding: 10px 12px;
-            background-color: #111827;
+            background-color: #f8fafc;
             color: var(--text-sub);
             font-weight: 600;
             border-bottom: 1px solid var(--panel-border);
@@ -324,6 +391,19 @@
             padding: 10px 12px;
             border-bottom: 1px solid var(--panel-border);
             color: var(--text-main);
+        }
+
+        .table-custom tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-custom code {
+            background-color: #f1f5f9;
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-size: 0.78rem;
+            color: var(--accent-blue);
         }
 
         .chart-box {
@@ -355,19 +435,101 @@
         .tab-section.active {
             display: block;
         }
+
+        /* Section headings */
+        .section-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 20px 0 10px;
+        }
+
+        /* Geospatial map */
+        .map-svg-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .map-pin {
+            cursor: pointer;
+            transition: transform 0.12s ease;
+        }
+
+        .map-pin:hover {
+            transform: scale(1.15);
+        }
+
+        .map-tooltip {
+            position: absolute;
+            min-width: 220px;
+            background: #ffffff;
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 0.12s ease, transform 0.12s ease;
+            z-index: 50;
+        }
+
+        .map-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .map-tooltip > div {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .map-tooltip > div:first-child {
+            display: block;
+        }
+
+        /* Alert log rows */
+        .log-item {
+            padding: 9px 12px;
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.82rem;
+            background: #f8fafc;
+            color: var(--text-main);
+        }
+
+        .log-time {
+            color: var(--text-sub);
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+
+        .header-tools {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .last-updated {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="alert-banner" id="global-alert">CRITICAL ALERT: WATER QUALITY PARAMETERS OUTSIDE SAFE WHO LIMITS</div>
-
     <!-- DEMO NOTIFICATION -->
-    <div id="demo-indicator" style="display:none; position:fixed; bottom:16px; right:16px; background:#2563eb; color:#ffffff; padding:6px 14px; border-radius:4px; font-size:0.8rem; font-weight:600; z-index:9999;">
+    <div id="demo-indicator" style="display:none; position:fixed; bottom:16px; right:16px; background:#1d4ed8; color:#ffffff; padding:6px 14px; border-radius:6px; font-size:0.8rem; font-weight:600; z-index:9999; box-shadow:0 4px 12px rgba(15,23,42,0.18);">
         Demo Simulation Active</div>
 
     <!-- SIDEBAR -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="brand-header">
             <img src="logo.png" alt="HydraCure Logo">
             <div class="brand-title">Hydra<span>Cure</span></div>
@@ -389,8 +551,18 @@
         </div>
     </div>
 
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar(event, true)"></div>
+
     <!-- MAIN WORKSPACE -->
     <div class="main-content">
+
+        <div class="mobile-topbar">
+            <button class="hamburger-btn" aria-label="Open menu" onclick="toggleSidebar(event)">☰</button>
+            <div class="mobile-brand">Hydra<span>Cure</span></div>
+            <div class="mobile-status"><div class="dot" id="mobile-live-dot"></div><span id="mobile-live-text">Awaiting Stream...</span></div>
+        </div>
+
+        <div class="alert-banner" id="global-alert">CRITICAL ALERT: WATER QUALITY PARAMETERS OUTSIDE SAFE WHO LIMITS</div>
 
         <!-- OVERVIEW TAB -->
         <div id="overview" class="tab-section active">
@@ -399,7 +571,10 @@
                     <div class="page-title-text">Water Quality Monitoring Dashboard</div>
                     <div class="page-subtitle-text">Real-time telemetry for 4 hardware sensors (pH, Temperature, Turbidity, TDS)</div>
                 </div>
-                <div class="status-badge status-badge-safe" id="ov-status">System Normal</div>
+                <div class="header-tools">
+                    <span class="last-updated" id="last-updated">Waiting for data…</span>
+                    <div class="status-badge status-badge-safe" id="ov-status">System Normal</div>
+                </div>
             </div>
 
             <!-- HARDWARE NOTICE -->
@@ -448,7 +623,7 @@
                     <div class="metric-unit">NTU</div>
                     <div class="metric-footer">
                         <span>WHO Limit: &lt; 5 NTU</span>
-                        <span id="ntu-status-label" style="color:#fbbf24;">Insert into Water</span>
+                        <span id="ntu-status-label" style="color:#b45309;">Insert into Water</span>
                     </div>
                 </div>
 
@@ -476,7 +651,7 @@
                 </div>
                 <div class="card-panel">
                     <div class="card-label">Toxicity Assessment</div>
-                    <div class="metric-value" id="safety-alert-text" style="font-size:1.5rem; margin-top:8px; color:#34d399;">SAFE</div>
+                    <div class="metric-value" id="safety-alert-text" style="font-size:1.5rem; margin-top:8px; color:#059669;">SAFE</div>
                     <div class="metric-unit">Multi-sensor classifier</div>
                 </div>
                 <div class="card-panel">
@@ -501,8 +676,15 @@
                 </div>
             </div>
 
+            <!-- COMPLIANCE SUMMARY -->
+            <div class="card-panel" style="margin-bottom: 20px;">
+                <div class="card-label">WHO / BIS Compliance Summary (Last 200 Readings)</div>
+                <div class="metric-value" id="ov-compliance-pct" style="font-size:1.5rem; margin-top:6px; color:#059669;">—</div>
+                <div class="metric-unit" id="ov-compliance-text">Waiting for sensor data…</div>
+            </div>
+
             <!-- HARDWARE TELEMETRY TABLE -->
-            <div style="font-size:0.88rem; font-weight:600; color:#ffffff; margin: 20px 0 10px;">Hardware Node Details</div>
+            <div class="section-title">Hardware Node Details</div>
             <div class="card-panel" style="padding:0; overflow:hidden;">
                 <table class="table-custom">
                     <thead>
@@ -547,23 +729,23 @@
                 </table>
             </div>
 
-            <!-- TRACE METALS ESTIMATE -->
-            <div style="font-size:0.88rem; font-weight:600; color:#ffffff; margin: 24px 0 10px;">Trace Heavy Metals Estimate (AI Baseline)</div>
+            <!-- HEAVY METALS ANALYSIS -->
+            <div class="section-title">Heavy Metals Analysis (Model-Based)</div>
             <div class="grid-3">
                 <div class="card-panel">
-                    <div class="card-label">Lead (Pb) <span class="status-badge status-badge-safe" id="metal-pb-pill">SAFE</span></div>
-                    <div class="metric-value" id="metal-pb" style="font-size:1.4rem; margin-top:6px;">0.70</div>
-                    <div class="metric-unit">ppb (WHO Limit: 10 ppb)</div>
+                    <div class="card-label">Total Estimated Metals <span class="status-badge status-badge-safe" id="metals-total-pill">SAFE</span></div>
+                    <div class="metric-value" id="metals-total" style="font-size:1.4rem; margin-top:6px;">—</div>
+                    <div class="metric-unit">µg/L combined (WHO guideline total: 40 µg/L)</div>
                 </div>
                 <div class="card-panel">
-                    <div class="card-label">Arsenic (As) <span class="status-badge status-badge-safe" id="metal-as-pill">SAFE</span></div>
-                    <div class="metric-value" id="metal-as" style="font-size:1.4rem; margin-top:6px;">0.28</div>
-                    <div class="metric-unit">ppb (WHO Limit: 10 ppb)</div>
+                    <div class="card-label">Model Confidence</div>
+                    <div class="metric-value" id="metals-confidence" style="font-size:1.4rem; margin-top:6px;">—</div>
+                    <div class="metric-unit" id="metals-confidence-sub">Awaiting AI engine…</div>
                 </div>
                 <div class="card-panel">
-                    <div class="card-label">Iron (Fe) <span class="status-badge status-badge-safe" id="metal-fe-pill">SAFE</span></div>
-                    <div class="metric-value" id="metal-fe" style="font-size:1.4rem; margin-top:6px;">0.01</div>
-                    <div class="metric-unit">mg/L (BIS Limit: 1.0 mg/L)</div>
+                    <div class="card-label">Prediction Validity <span class="status-badge status-badge-warn" id="metals-validity-pill">STANDBY</span></div>
+                    <div class="metric-value" id="metals-validity" style="font-size:1.4rem; margin-top:6px;">—</div>
+                    <div class="metric-unit" id="metals-validity-sub">Needs all 4 sensors reporting</div>
                 </div>
             </div>
         </div>
@@ -653,12 +835,15 @@
 
             <div class="card-panel" style="margin-bottom: 16px;">
                 <div class="card-label">Overall Safety Compliance</div>
-                <div class="metric-value" id="rep-safe-pct" style="color:#34d399; font-size:1.8rem; margin-top:4px;">100%</div>
+                <div class="metric-value" id="rep-safe-pct" style="color:#059669; font-size:1.8rem; margin-top:4px;">100%</div>
                 <div class="metric-unit">Percentage of readings within WHO guidelines</div>
             </div>
 
             <div class="card-panel">
-                <div class="card-label" style="margin-bottom: 10px;">Alert History Log</div>
+                <div class="card-label" style="margin-bottom: 10px;">
+                    <span>Alert History Log</span>
+                    <button class="btn-action" style="background:#f8fafc; color:var(--text-main); border:1px solid var(--panel-border); text-transform:uppercase; font-size:0.72rem; padding:5px 10px;" onclick="clearAlertLog(event)">Clear Log</button>
+                </div>
                 <div id="alert-history-log" style="max-height: 300px; overflow-y: auto;">
                     <div class="log-item" style="color:var(--text-sub);">No critical alerts logged.</div>
                 </div>
@@ -676,43 +861,43 @@
             <div class="card-panel" style="padding:0; overflow:hidden;">
                 <div class="map-svg-wrap" id="map-container">
                     <svg viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="800" height="480" fill="#111827" />
-                        <path d="M0,200 Q100,180 200,210 Q320,240 420,220 Q540,200 650,230 Q730,250 800,240" fill="none" stroke="#1f2937" stroke-width="14" />
-                        <text x="320" y="248" fill="#4b5563" font-size="11">Godavari River</text>
+                        <rect width="800" height="480" fill="#f8fafc" />
+                        <path d="M0,200 Q100,180 200,210 Q320,240 420,220 Q540,200 650,230 Q730,250 800,240" fill="none" stroke="#bfdbfe" stroke-width="14" />
+                        <text x="320" y="248" fill="#64748b" font-size="11">Godavari River</text>
 
-                        <line x1="0" y1="300" x2="800" y2="300" stroke="#1f2937" stroke-width="6" />
-                        <line x1="400" y1="0" x2="400" y2="480" stroke="#1f2937" stroke-width="6" />
+                        <line x1="0" y1="300" x2="800" y2="300" stroke="#cbd5e1" stroke-width="6" />
+                        <line x1="400" y1="0" x2="400" y2="480" stroke="#cbd5e1" stroke-width="6" />
 
-                        <text x="100" y="345" fill="#6b7280" font-size="10" text-anchor="middle">PANCHAVATI</text>
-                        <text x="300" y="345" fill="#6b7280" font-size="10" text-anchor="middle">UPNAGAR NAKA</text>
-                        <text x="500" y="345" fill="#6b7280" font-size="10" text-anchor="middle">AMRUTNAGAR</text>
-                        <text x="700" y="345" fill="#6b7280" font-size="10" text-anchor="middle">SATPUR</text>
+                        <text x="100" y="345" fill="#64748b" font-size="10" text-anchor="middle">PANCHAVATI</text>
+                        <text x="300" y="345" fill="#64748b" font-size="10" text-anchor="middle">UPNAGAR NAKA</text>
+                        <text x="500" y="345" fill="#64748b" font-size="10" text-anchor="middle">AMRUTNAGAR</text>
+                        <text x="700" y="345" fill="#64748b" font-size="10" text-anchor="middle">SATPUR</text>
 
-                        <text x="400" y="100" fill="#374151" font-size="22" font-weight="700" text-anchor="middle">NASHIK PIPELINE GRID</text>
+                        <text x="400" y="100" fill="#94a3b8" font-size="22" font-weight="700" text-anchor="middle">NASHIK PIPELINE GRID</text>
                     </svg>
 
                     <!-- PINS -->
                     <div class="map-pin" style="position:absolute;left:11%;top:62%;"
                         onclick="showTooltip(event,'Panchavati','⚠️ CAUTION','pH: 6.2 | Temp: 28°C','TDS: 480 ppm | NTU: 6.2','warn')">
-                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#f59e0b" /><circle cx="14" cy="14" r="5" fill="#111827" /></svg>
+                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#f59e0b" /><circle cx="14" cy="14" r="5" fill="#ffffff" /></svg>
                     </div>
 
                     <div class="map-pin" style="position:absolute;left:35%;top:62%;"
                         onclick="showTooltip(event,'Upnagar Naka','✅ SAFE','pH: 7.07 | Temp: 29.5°C','TDS: 139.8 ppm | NTU: 0.0','safe')">
-                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#10b981" /><circle cx="14" cy="14" r="5" fill="#111827" /></svg>
+                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#10b981" /><circle cx="14" cy="14" r="5" fill="#ffffff" /></svg>
                     </div>
 
                     <div class="map-pin" style="position:absolute;left:60%;top:62%;"
                         onclick="showTooltip(event,'Amrutnagar','❌ UNSAFE','pH: 5.2 | Temp: 36°C','TDS: 1240 ppm | NTU: 18.5','danger')">
-                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ef4444" /><circle cx="14" cy="14" r="5" fill="#111827" /></svg>
+                        <svg width="22" height="30" viewBox="0 0 28 36"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.33 14 22 14 22S28 23.33 28 14C28 6.27 21.73 0 14 0z" fill="#ef4444" /><circle cx="14" cy="14" r="5" fill="#ffffff" /></svg>
                     </div>
 
                     <!-- Tooltip -->
                     <div class="map-tooltip" id="map-tooltip">
-                        <div style="font-weight:700; color:white; margin-bottom:4px;" id="tt-area">--</div>
-                        <div style="display:flex; justify-content:space-between;"><span>Status:</span><span id="tt-status">--</span></div>
-                        <div style="display:flex; justify-content:space-between;"><span>pH/Temp:</span><span id="tt-tds">--</span></div>
-                        <div style="display:flex; justify-content:space-between;"><span>TDS/NTU:</span><span id="tt-ntu">--</span></div>
+                        <div style="font-weight:700; margin-bottom:4px;" id="tt-area">--</div>
+                        <div><span>Status:</span><span id="tt-status">--</span></div>
+                        <div><span>pH/Temp:</span><span id="tt-tds">--</span></div>
+                        <div><span>TDS/NTU:</span><span id="tt-ntu">--</span></div>
                     </div>
                 </div>
             </div>
@@ -743,6 +928,14 @@
 
         const db = getDatabase(app);
 
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.borderColor = '#e2e8f0';
+        Chart.defaults.plugins.tooltip.backgroundColor = '#ffffff';
+        Chart.defaults.plugins.tooltip.titleColor = '#0f172a';
+        Chart.defaults.plugins.tooltip.bodyColor = '#334155';
+        Chart.defaults.plugins.tooltip.borderColor = '#e2e8f0';
+        Chart.defaults.plugins.tooltip.borderWidth = 1;
+
         // State matching exact user DB schema
         let currentPH = 7.07;
         let currentTemp = 29.5;
@@ -765,7 +958,9 @@
         let wqiVal = 0;
 
         let lastPushTime = 0;
-        let currentLead = 0.70, currentArsenic = 0.28, currentIron = 0.01;
+        let lastDataTime = 0;
+        let streamPh = false, streamTemp = false, streamTds = false, streamNtu = false;
+        let modelResult = null;
         let liveHistory = { ts: [], tds: [], ntu: [], ph: [], temp: [] };
         let fullHistory = [];
 
@@ -774,6 +969,86 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(target).classList.add('active');
             if (event) event.currentTarget.classList.add('active');
+            closeSidebar();
+
+            if (target === 'analytics') {
+                loadHistoricalAndGenerateInsights();
+                renderAlertCount();
+            } else if (target === 'reports') {
+                refreshReportStats();
+                renderAlertLog();
+                renderComplianceSummary();
+            }
+        };
+
+        window.toggleSidebar = function (event, forceClose) {
+            if (event) event.stopPropagation();
+            const sb = document.getElementById('sidebar');
+            const bd = document.getElementById('sidebar-backdrop');
+            const open = forceClose ? false : !sb.classList.contains('open');
+            sb.classList.toggle('open', open);
+            bd.classList.toggle('show', open);
+        };
+
+        function closeSidebar() {
+            const sb = document.getElementById('sidebar');
+            const bd = document.getElementById('sidebar-backdrop');
+            if (sb) sb.classList.remove('open');
+            if (bd) bd.classList.remove('show');
+        }
+
+        // --- Alert history log (persisted) ---
+        const ALERT_LOG_KEY = 'hydracure_alert_log';
+
+        function loadAlertLog() {
+            try {
+                const stored = localStorage.getItem(ALERT_LOG_KEY);
+                return stored ? JSON.parse(stored) : [];
+            } catch (e) { return []; }
+        }
+
+        function saveAlertLog(list) {
+            try { localStorage.setItem(ALERT_LOG_KEY, JSON.stringify(list)); } catch (e) {}
+        }
+
+        function logAlertEvent(kind, detail) {
+            const list = loadAlertLog();
+            list.push({ timestamp: Date.now(), kind: kind, detail: detail });
+            if (list.length > 50) list.splice(0, list.length - 50);
+            saveAlertLog(list);
+            renderAlertLog();
+            renderAlertCount();
+        }
+
+        function renderAlertLog() {
+            const container = document.getElementById('alert-history-log');
+            if (!container) return;
+            const list = loadAlertLog();
+            if (list.length === 0) {
+                container.innerHTML = '<div class="log-item" style="color:var(--text-sub);">No critical alerts logged.</div>';
+                return;
+            }
+            container.innerHTML = list.slice().reverse().map(a => {
+                const time = new Date(a.timestamp).toLocaleString();
+                const badge = a.kind === 'resolved'
+                    ? '<span class="status-badge status-badge-safe">RESOLVED</span>'
+                    : '<span class="status-badge status-badge-danger">CRITICAL</span>';
+                return '<div class="log-item">' + badge + '<span class="log-time">' + time + '</span><div style="margin-top:6px;">' + a.detail + '</div></div>';
+            }).join('');
+        }
+
+        function renderAlertCount() {
+            const el = document.getElementById('alert-freq');
+            if (!el) return;
+            const count = loadAlertLog().filter(a => a.kind === 'breach').length;
+            el.textContent = count + (count === 1 ? ' Flag' : ' Flags');
+        }
+
+        window.clearAlertLog = function (event) {
+            if (event) event.stopPropagation();
+            saveAlertLog([]);
+            renderAlertLog();
+            renderAlertCount();
         };
 
         function setBadge(id, text, type) {
@@ -840,7 +1115,7 @@
                 const ntuStatusLabel = document.getElementById('ntu-status-label');
                 if (ntuStatusLabel) {
                     ntuStatusLabel.textContent = turbidityStatus;
-                    ntuStatusLabel.style.color = turbidityStatus === 'WORKING' ? '#34d399' : '#fbbf24';
+                    ntuStatusLabel.style.color = turbidityStatus === 'WORKING' ? '#059669' : '#b45309';
                 }
 
                 const tblNtuVal = document.getElementById('tbl-ntu-val');
@@ -880,23 +1155,45 @@
             if (wqiLabel) wqiLabel.textContent = `Stream: Online | WQI: ${wqiVal}`;
         }
 
+        let lastBreachKey = '';
+
         function handleAlerts(tds, ntu, ph, temp) {
             const banner = document.getElementById('global-alert');
             const ovStatus = document.getElementById('ov-status');
+            const tox = document.getElementById('safety-alert-text');
 
             const isPhUnsafe = (ph !== null && (ph < 6.5 || ph > 8.5));
             const isTempHigh = (temp !== null && temp > 35);
             const isTdsHigh = (tds !== null && tds > 1000);
             const isNtuHigh = (ntu !== null && ntu > 5);
 
-            if (isTdsHigh || isNtuHigh || isPhUnsafe || isTempHigh) {
+            const breaches = [];
+            if (isTdsHigh) breaches.push('TDS ' + tds.toFixed(0) + ' ppm (limit 1000)');
+            if (isNtuHigh) breaches.push('Turbidity ' + ntu.toFixed(1) + ' NTU (limit 5)');
+            if (isPhUnsafe) breaches.push('pH ' + ph.toFixed(2) + ' (safe range 6.5–8.5)');
+            if (isTempHigh) breaches.push('Temp ' + temp.toFixed(1) + ' °C (limit 35)');
+
+            if (breaches.length > 0) {
                 banner.classList.add('active');
                 ovStatus.textContent = 'Threshold Exceeded';
                 ovStatus.className = 'status-badge status-badge-danger';
+                if (tox) { tox.textContent = 'DANGER'; tox.style.color = '#dc2626'; }
+
+                const breachKey = breaches.map(b => b.split(' ')[0]).sort().join('+');
+                if (breachKey !== lastBreachKey) {
+                    logAlertEvent('breach', breaches.join(' · '));
+                    lastBreachKey = breachKey;
+                }
             } else {
                 banner.classList.remove('active');
                 ovStatus.textContent = 'System Normal';
                 ovStatus.className = 'status-badge status-badge-safe';
+                if (tox) { tox.textContent = 'SAFE'; tox.style.color = '#059669'; }
+
+                if (lastBreachKey !== '') {
+                    logAlertEvent('resolved', 'All sensor parameters back within safe limits');
+                    lastBreachKey = '';
+                }
             }
         }
 
@@ -925,15 +1222,15 @@
                 type: 'line',
                 data: { labels: [], datasets: [
                     { label: 'TDS (ppm)', borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, data: [] }, 
-                    { label: 'NTU', borderColor: '#10b981', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y1' },
-                    { label: 'pH', borderColor: '#ec4899', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y2' },
-                    { label: 'Temp (°C)', borderColor: '#f59e0b', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y3' }
+                    { label: 'NTU', borderColor: '#059669', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y1' },
+                    { label: 'pH', borderColor: '#db2777', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y2' },
+                    { label: 'Temp (°C)', borderColor: '#d97706', borderWidth: 2, pointRadius: 0, data: [], yAxisID: 'y3' }
                 ] },
                 options: { 
                     animation: false, 
                     scales: { x: { display: false }, y: { display: false }, y1: { display: false }, y2: { display: false }, y3: { display: false } }, 
                     plugins: { 
-                        legend: { display: true, position: 'top', align: 'end', labels: { color: '#9ca3af', boxWidth: 8, font: { size: 10 } } } 
+                        legend: { display: true, position: 'top', align: 'end', labels: { color: '#64748b', boxWidth: 8, font: { size: 10 } } } 
                     }, 
                     maintainAspectRatio: false 
                 }
@@ -941,8 +1238,9 @@
         }
 
         function processNewData() {
+            lastDataTime = Date.now();
             updateSensorCards();
-            updateMetalsUI();
+            updateHeavyMetalsUI();
             handleAlerts(currentTDS, currentNTU, currentPH, currentTemp);
 
             const now = Date.now();
@@ -952,6 +1250,10 @@
             const record = { timestamp: now, tds: currentTDS, ntu: currentNTU, ph: currentPH, temp: currentTemp, voltage: phVoltage };
             const timeLabel = new Date(now).toLocaleTimeString();
             saveLocalRecord(record);
+
+            fullHistory.push(record);
+            if (fullHistory.length > 200) fullHistory.shift();
+            renderComplianceSummary();
 
             updateCharts(timeLabel);
         }
@@ -986,51 +1288,9 @@
             }
         }
 
-        window.loadHistoricalAndGenerateInsights = async function () {
+        function refreshReportStats() {
             fullHistory = loadLocalHistory();
             if (!fullHistory || fullHistory.length === 0) return;
-
-            let labels = fullHistory.slice(-100).map(d => new Date(d.timestamp).toLocaleTimeString());
-            let tData = fullHistory.slice(-100).map(d => d.tds);
-            let nData = fullHistory.slice(-100).map(d => d.ntu);
-            let pData = fullHistory.slice(-100).map(d => d.ph || 7.07);
-            let tmpData = fullHistory.slice(-100).map(d => d.temp || 29.5);
-
-            if (window.tdsChart) window.tdsChart.destroy();
-            const tdsCanvas = document.getElementById('mainTdsChart');
-            if (tdsCanvas) {
-                window.tdsChart = new Chart(tdsCanvas, {
-                    type: 'line', data: { labels, datasets: [{ label: 'TDS (ppm)', data: tData, borderColor: '#2563eb', borderWidth: 2, pointRadius: 1 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } }, maintainAspectRatio: false }
-                });
-            }
-
-            if (window.ntuChart) window.ntuChart.destroy();
-            const ntuCanvas = document.getElementById('mainNtuChart');
-            if (ntuCanvas) {
-                window.ntuChart = new Chart(ntuCanvas, {
-                    type: 'line', data: { labels, datasets: [{ label: 'NTU', data: nData, borderColor: '#10b981', borderWidth: 2, pointRadius: 1 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } }, maintainAspectRatio: false }
-                });
-            }
-
-            if (window.phChart) window.phChart.destroy();
-            const phCanvas = document.getElementById('mainPhChart');
-            if (phCanvas) {
-                window.phChart = new Chart(phCanvas, {
-                    type: 'line', data: { labels, datasets: [{ label: 'pH', data: pData, borderColor: '#ec4899', borderWidth: 2, pointRadius: 1 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 4, max: 10, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } }, maintainAspectRatio: false }
-                });
-            }
-
-            if (window.tempChart) window.tempChart.destroy();
-            const tempCanvas = document.getElementById('mainTempChart');
-            if (tempCanvas) {
-                window.tempChart = new Chart(tempCanvas, {
-                    type: 'line', data: { labels, datasets: [{ label: 'Temp (°C)', data: tmpData, borderColor: '#f59e0b', borderWidth: 2, pointRadius: 1 }] },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 10, max: 45, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } }, maintainAspectRatio: false }
-                });
-            }
 
             const len = fullHistory.length;
             let sumTDS = 0, sumPH = 0, sumTemp = 0, maxNTU = 0, safeC = 0;
@@ -1046,13 +1306,99 @@
             document.getElementById('rep-max-ntu').textContent = maxNTU.toFixed(1);
             const safePct = (safeC / len) * 100;
             document.getElementById('rep-safe-pct').textContent = safePct.toFixed(1) + '%';
+
+            renderComplianceSummary();
+        }
+
+        window.loadHistoricalAndGenerateInsights = async function () {
+            fullHistory = loadLocalHistory();
+            if (!fullHistory || fullHistory.length === 0) return;
+
+            let labels = fullHistory.slice(-100).map(d => new Date(d.timestamp).toLocaleTimeString());
+            let tData = fullHistory.slice(-100).map(d => d.tds);
+            let nData = fullHistory.slice(-100).map(d => d.ntu);
+            let pData = fullHistory.slice(-100).map(d => d.ph || 7.07);
+            let tmpData = fullHistory.slice(-100).map(d => d.temp || 29.5);
+
+            if (window.tdsChart) window.tdsChart.destroy();
+            const tdsCanvas = document.getElementById('mainTdsChart');
+            if (tdsCanvas) {
+                window.tdsChart = new Chart(tdsCanvas, {
+                    type: 'line', data: { labels, datasets: [{ label: 'TDS (ppm)', data: tData, borderColor: '#2563eb', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } }, maintainAspectRatio: false }
+                });
+            }
+
+            if (window.ntuChart) window.ntuChart.destroy();
+            const ntuCanvas = document.getElementById('mainNtuChart');
+            if (ntuCanvas) {
+                window.ntuChart = new Chart(ntuCanvas, {
+                    type: 'line', data: { labels, datasets: [{ label: 'NTU', data: nData, borderColor: '#059669', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } }, maintainAspectRatio: false }
+                });
+            }
+
+            if (window.phChart) window.phChart.destroy();
+            const phCanvas = document.getElementById('mainPhChart');
+            if (phCanvas) {
+                window.phChart = new Chart(phCanvas, {
+                    type: 'line', data: { labels, datasets: [{ label: 'pH', data: pData, borderColor: '#db2777', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 4, max: 10, grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } }, maintainAspectRatio: false }
+                });
+            }
+
+            if (window.tempChart) window.tempChart.destroy();
+            const tempCanvas = document.getElementById('mainTempChart');
+            if (tempCanvas) {
+                window.tempChart = new Chart(tempCanvas, {
+                    type: 'line', data: { labels, datasets: [{ label: 'Temp (°C)', data: tmpData, borderColor: '#d97706', borderWidth: 2, pointRadius: 1 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { min: 10, max: 45, grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } }, maintainAspectRatio: false }
+                });
+            }
+
+            refreshReportStats();
         };
 
         function updateLiveConnection() {
             document.getElementById('live-dot').classList.add('live');
             document.getElementById('live-text').textContent = 'Stream Active';
             document.getElementById('conn-status').textContent = 'Active';
+            const mDot = document.getElementById('mobile-live-dot');
+            const mText = document.getElementById('mobile-live-text');
+            if (mDot) mDot.classList.add('live');
+            if (mText) mText.textContent = 'Stream Active';
         }
+
+        function renderComplianceSummary() {
+            const pctEl = document.getElementById('ov-compliance-pct');
+            const textEl = document.getElementById('ov-compliance-text');
+            if (!pctEl || !textEl) return;
+            if (!fullHistory || fullHistory.length === 0) {
+                pctEl.textContent = '—';
+                pctEl.style.color = '#059669';
+                textEl.textContent = 'Waiting for sensor data…';
+                return;
+            }
+            const safeCount = fullHistory.filter(d =>
+                d.tds <= 500 && d.ntu <= 5 && (d.ph >= 6.5 && d.ph <= 8.5) && (d.temp <= 30)
+            ).length;
+            const pct = (safeCount / fullHistory.length) * 100;
+            pctEl.textContent = pct.toFixed(1) + '%';
+            pctEl.style.color = pct >= 90 ? '#059669' : (pct >= 70 ? '#b45309' : '#dc2626');
+            textEl.textContent = safeCount + ' of last ' + fullHistory.length + ' readings within WHO/BIS guidelines (pH 6.5–8.5, Temp ≤ 30°C, TDS ≤ 500 ppm, NTU ≤ 5)';
+        }
+
+        function updateLastUpdated() {
+            const el = document.getElementById('last-updated');
+            if (!el) return;
+            if (lastDataTime === 0) {
+                el.textContent = 'Waiting for data…';
+                return;
+            }
+            const secs = Math.max(0, Math.floor((Date.now() - lastDataTime) / 1000));
+            el.textContent = secs <= 1 ? 'Updated just now' : 'Updated ' + secs + 's ago';
+        }
+        setInterval(updateLastUpdated, 1000);
 
         let firebaseListeners = [];
 
@@ -1065,6 +1411,7 @@
                     if (d.status) phStatus = d.status;
                     if (d.voltage !== undefined) phVoltage = parseFloat(d.voltage);
                 } else { currentPH = parseFloat(d); }
+                streamPh = true;
                 updateSparkline(); updateLiveConnection(); processNewData();
             });
 
@@ -1075,6 +1422,7 @@
                     currentTemp = parseFloat(d.celsius ?? d.temp ?? d.temperature ?? d.value ?? 29.5);
                     if (d.status) tempStatus = d.status;
                 } else { currentTemp = parseFloat(d); }
+                streamTemp = true;
                 updateSparkline(); updateLiveConnection(); processNewData();
             });
 
@@ -1086,6 +1434,7 @@
                     if (d.clarity) turbidityClarity = d.clarity;
                     if (d.status) turbidityStatus = d.status;
                 } else { currentNTU = parseFloat(d); }
+                streamNtu = true;
                 updateSparkline(); updateLiveConnection(); processNewData();
             });
 
@@ -1099,6 +1448,7 @@
                     if (d.voltage !== undefined) tdsVoltage = parseFloat(d.voltage);
                     if (d.current_cal_factor !== undefined) tdsCalFactor = parseFloat(d.current_cal_factor);
                 } else { currentTDS = parseFloat(d); }
+                streamTds = true;
                 updateSparkline(); updateLiveConnection(); processNewData();
             });
 
@@ -1122,7 +1472,22 @@
                 updateSensorCards();
             });
 
-            firebaseListeners = [unsubPh, unsubTemp, unsubNtu, unsubTds, unsubSystem, unsubStatus];
+            // /live_monitoring/inference_results — output of the Python RandomForest engine
+            const unsubModel = onValue(ref(db, "/live_monitoring/inference_results"), snap => {
+                const d = snap.val(); if (!d) return;
+                const keys = Object.keys(d);
+                const latest = d[keys[keys.length - 1]];
+                if (!latest || typeof latest !== 'object') return;
+                modelResult = {
+                    ts: latest.timestamp ? Number(latest.timestamp) : 0,
+                    confidence: latest.confidence !== undefined ? parseFloat(latest.confidence) : null,
+                    risk_level: latest.risk_level || null,
+                    valid: latest.valid !== undefined ? Boolean(latest.valid) : true
+                };
+                updateHeavyMetalsUI();
+            });
+
+            firebaseListeners = [unsubPh, unsubTemp, unsubNtu, unsubTds, unsubSystem, unsubStatus, unsubModel];
         }
 
         function stopFirebase() {
@@ -1152,6 +1517,8 @@
             const ind = document.getElementById('demo-indicator');
             const lText = document.getElementById('live-text');
             const lDot = document.getElementById('live-dot');
+            const mText = document.getElementById('mobile-live-text');
+            const mDot = document.getElementById('mobile-live-dot');
 
             if (demoMode) {
                 btn.style.background = '#2563eb';
@@ -1159,19 +1526,23 @@
                 document.getElementById('demo-btn').textContent = 'Demo Active';
                 ind.style.display = 'block';
                 lText.textContent = 'Simulating Sensors';
-                lDot.style.background = '#f59e0b';
+                lDot.style.background = '#d97706';
+                if (mText) mText.textContent = 'Simulating Sensors';
+                if (mDot) mDot.style.background = '#d97706';
 
                 stopFirebase();
                 currentTDS = 139.81; currentNTU = 0.0; currentPH = 7.07; currentTemp = 29.5;
                 runDemoFrame();
                 demoInterval = setInterval(runDemoFrame, 3000);
             } else {
-                btn.style.background = '#1f2937';
-                btn.style.color = 'white';
+                btn.style.background = '#f8fafc';
+                btn.style.color = '#0f172a';
                 document.getElementById('demo-btn').textContent = 'Toggle Demo Mode';
                 ind.style.display = 'none';
-                lDot.style.background = '#ef4444';
+                lDot.style.background = '#dc2626';
                 lText.textContent = 'Waiting for Stream...';
+                if (mText) mText.textContent = 'Waiting for Stream...';
+                if (mDot) mDot.style.background = '#dc2626';
 
                 clearInterval(demoInterval);
                 startFirebase();
@@ -1200,28 +1571,44 @@
             miniChart.update();
         }
 
-        function updateMetalsUI() {
-            currentLead = currentTDS * 0.005 * (currentPH < 6.5 ? 2.5 : 1);
-            currentArsenic = currentTDS * 0.002 * (currentPH > 8.5 ? 2 : 1);
-            currentIron = currentNTU * 0.08 + (currentTDS * 0.0001);
+        function updateHeavyMetalsUI() {
+            // Total dissolved-metals proxy derived from the same inputs the
+            // toxicity model uses (TDS + turbidity + acidity-driven solubility).
+            const phFactor = currentPH < 6.5 ? 2.5 : (currentPH > 8.5 ? 2.0 : 1.0);
+            const totalMetals = (currentTDS * 0.05 + currentNTU * 2.0) * phFactor;
 
-            const setMetal = (id, val, limit) => {
-                const el = document.getElementById(id);
-                const pill = document.getElementById(id + '-pill');
-                if (!el || val === null) return;
-                el.textContent = val.toFixed(2);
-                
-                if (val < (limit * 0.4)) { 
-                    setBadge(id + '-pill', 'SAFE', 'safe');
-                } else if (val < limit) { 
-                    setBadge(id + '-pill', 'ACCEPTABLE', 'warn');
-                } else { 
-                    setBadge(id + '-pill', 'DANGEROUS', 'danger');
-                }
-            };
-            setMetal('metal-pb', currentLead, 10.0);
-            setMetal('metal-as', currentArsenic, 10.0);
-            setMetal('metal-fe', currentIron, 1.0);
+            const totalEl = document.getElementById('metals-total');
+            if (totalEl) totalEl.textContent = totalMetals.toFixed(1);
+            if (totalMetals < 16) setBadge('metals-total-pill', 'SAFE', 'safe');
+            else if (totalMetals < 40) setBadge('metals-total-pill', 'ACCEPTABLE', 'warn');
+            else setBadge('metals-total-pill', 'DANGEROUS', 'danger');
+
+            const confEl = document.getElementById('metals-confidence');
+            const confSub = document.getElementById('metals-confidence-sub');
+            const validEl = document.getElementById('metals-validity');
+            const fresh = modelResult && (Date.now() - modelResult.ts < 300000);
+
+            if (fresh && typeof modelResult.confidence === 'number') {
+                const confPct = modelResult.confidence * 100;
+                if (confEl) confEl.textContent = confPct.toFixed(0) + '%';
+                if (confSub) confSub.textContent = 'RandomForest tree-vote agreement · risk: ' + (modelResult.risk_level || '—');
+            } else {
+                if (confEl) confEl.textContent = '—';
+                if (confSub) confSub.textContent = 'Awaiting AI engine (inference_bridge.py)…';
+            }
+
+            const sensorsOnline = streamPh && streamTemp && streamTds && streamNtu;
+            if (validEl) validEl.textContent = fresh ? (modelResult.valid ? 'VALID' : 'INVALID INPUT') : (sensorsOnline ? 'ENGINE OFFLINE' : 'SENSORS MISSING');
+            setBadge('metals-validity-pill', fresh && modelResult.valid ? 'SAFE' : 'STANDBY', fresh && modelResult.valid ? 'safe' : 'warn');
+            if (validEl && validEl.textContent === 'INVALID INPUT') setBadge('metals-validity-pill', 'CHECK', 'danger');
+            if (validEl && validEl.textContent === 'VALID') {
+                const v = document.getElementById('metals-validity');
+                v.style.color = '#059669';
+            } else if (validEl) {
+                validEl.style.color = '';
+            }
+            const validSub = document.getElementById('metals-validity-sub');
+            if (validSub) validSub.textContent = fresh ? 'Model accepted all sensor inputs' : 'Needs all 4 sensors reporting + AI engine running';
         }
 
         window.showTooltip = function (e, area, status, tds, ntu, type) {
@@ -1229,8 +1616,8 @@
             if (!tt) return;
             document.getElementById("tt-area").textContent = area; document.getElementById("tt-status").textContent = status;
             document.getElementById("tt-tds").textContent = tds; document.getElementById("tt-ntu").textContent = ntu;
-            const colors = { safe: "#10b981", warn: "#f59e0b", danger: "#ef4444" };
-            document.getElementById("tt-status").style.color = colors[type] || "white";
+            const colors = { safe: "#059669", warn: "#b45309", danger: "#dc2626" };
+            document.getElementById("tt-status").style.color = colors[type] || "#0f172a";
             const rect = document.querySelector('.map-svg-wrap').getBoundingClientRect();
             tt.style.left = (e.clientX - rect.left + 16) + 'px'; tt.style.top = (e.clientY - rect.top - 20) + 'px';
             tt.classList.add('show'); e.stopPropagation();
@@ -1239,6 +1626,9 @@
 
         startFirebase();
         window.loadHistoricalAndGenerateInsights();
+        renderAlertLog();
+        renderAlertCount();
+        updateLastUpdated();
     </script>
 </body>
 

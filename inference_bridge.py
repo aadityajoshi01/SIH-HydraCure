@@ -25,18 +25,37 @@ except Exception as e:
 # Initialize Firebase Admin
 print("Initializing Firebase...")
 try:
-    # Attempt to initialize with default credentials
-    # Ensure you have set the GOOGLE_APPLICATION_CREDENTIALS environment variable
-    # OR replace with credentials.Certificate('path/to/serviceAccountKey.json')
-    cred = credentials.Certificate('serviceAccountKey.json')
+    # Search common locations for the service account key
+    key_candidates = [
+        os.environ.get('FIREBASE_SERVICE_KEY', ''),
+        os.path.join(base_dir, 'serviceAccountKey.json'),
+        os.path.join(base_dir, 'service_key.json'),
+        os.path.join(base_dir, 'HydraCure ML', 'service_key.json'),
+    ]
+    key_path = next((p for p in key_candidates if p and os.path.isfile(p)), None)
+    if key_path is None:
+        raise FileNotFoundError('no service account key found')
+    cred = credentials.Certificate(key_path)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://iot-basics-5ba4b-default-rtdb.asia-southeast1.firebasedatabase.app'
     })
+    print(f"Using service key: {key_path}")
 except Exception as e:
-    # If serviceAccountKey.json is not found, fallback to default or prompt user
-    print(f"Failed to load serviceAccountKey.json: {e}")
-    print("Please ensure serviceAccountKey.json is present in the directory.")
+    print(f"Failed to load Firebase service account key: {e}")
+    print("Please place serviceAccountKey.json (or service_key.json) in the project root.")
     exit(1)
+
+# Warn early when the key belongs to a different Firebase project than the sensor DB
+try:
+    import json as _json
+    with open(key_path, encoding='utf-8') as f:
+        key_project = _json.load(f).get('project_id', '')
+    if key_project and key_project != 'iot-basics-5ba4b':
+        print(f"⚠️  WARNING: this key belongs to project '{key_project}', but the sensor database is 'iot-basics-5ba4b'.")
+        print("   In the Firebase console (iot-basics-5ba4b project): Project settings → Service accounts →")
+        print("   Generate new private key, and save it as serviceAccountKey.json in the project root.")
+except Exception:
+    pass
 
 print("Firebase initialized.")
 
@@ -67,31 +86,49 @@ def listener_callback(event):
 def process_data(tds, turbidity, temp, ph=7.0):
     try:
         # Stage 1: Predict Virtual/Inferred pH baseline
-        input_stage1 = np.array([[tds, turbidity, temp]])
-        virtual_ph = float(regressor.predict(input_stage1)[0]) if regressor else ph
-        
-        # Stage 2: Predict Toxicity Risk Level using actual or inferred pH
-        input_stage2 = np.array([[tds, turbidity, ph]])
+        # Model was trained with features in this exact order:
+        # ['Turbidity (NTU)', 'Temperature (°C)', 'TDS (mg/L)']
+        input_stage1 = np.array([[turbidity, temp, tds]])
+        predicted_ph = float(regressor.predict(input_stage1)[0]) if regressor else ph
+
+        # Stage 2: Predict Toxicity Risk Level using the inferred pH
+        # Model features: ['Predicted_pH', 'Turbidity (NTU)', 'TDS (mg/L)']
+        input_stage2 = np.array([[predicted_ph, turbidity, tds]])
         risk_level = classifier.predict(input_stage2)[0] if classifier else "SAFE"
-        
+        confidence = float(np.max(classifier.predict_proba(input_stage2)[0])) if classifier is not None and hasattr(classifier, 'predict_proba') else None
+
         if isinstance(risk_level, np.generic):
             risk_level = risk_level.item()
-            
+
+        # A prediction is only valid when every sensor feeding the model reports real data
+        valid = tds > 0 and turbidity > 0 and 0 < temp < 100
+
         ref = db.reference('live_monitoring/inference_results')
         result_payload = {
-            'virtual_ph': ph,
+            'virtual_ph': round(predicted_ph, 2),
+            'measured_ph': ph,
             'risk_level': risk_level,
+            'confidence': round(confidence, 3) if confidence is not None else '',
+            'valid': bool(valid),
             'timestamp': int(time.time() * 1000)
         }
         ref.push(result_payload)
-        print(f"Inference complete. pH: {ph:.2f}, Risk Level: {risk_level}")
-        
+        conf_str = f"{confidence * 100:.0f}%" if confidence is not None else "n/a"
+        print(f"Inference complete. Virtual pH: {predicted_ph:.2f}, Risk: {risk_level}, Confidence: {conf_str}, Valid: {valid}")
+
     except Exception as e:
         print(f"Error during inference: {e}")
 
 # Start listening to root database for any sensor update
 listener_ref = db.reference('/')
-listener = listener_ref.listen(listener_callback)
+try:
+    listener = listener_ref.listen(listener_callback)
+except Exception as e:
+    print(f"❌ Could not start Firebase listener: {e}")
+    print("   The service account key was rejected. Fix it in the Firebase console:")
+    print("   1. IAM & Admin → Settings → enable 'Service account authentication support' for RTDB, and/or")
+    print("   2. IAM & Admin → Grant the service account the 'Firebase Realtime Database Admin' role, then rerun start.bat.")
+    exit(1)
 
 print("Listening for sensor updates on root database...")
 

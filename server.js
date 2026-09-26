@@ -266,6 +266,16 @@ const server = http.createServer((req, res) => {
   });
 });
 
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} is already in use — a HydraCure server is likely already running.`);
+    console.log(`Open http://localhost:${PORT} directly, or run stop.bat first, then start again.`);
+  } else {
+    console.error('Server error:', err.message);
+  }
+  process.exit(1);
+});
+
 server.listen(PORT, () => {
   console.log(`JS server running at http://localhost:${PORT}`);
 });

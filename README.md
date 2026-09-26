@@ -54,7 +54,7 @@ The project is divided into two main parts:
 * Embedded logic for processing 4-sensor hardware values
 * Water quality classification logic adhering to WHO & BIS standards
 * Interactive real-time web dashboard
-* Machine learning toxicity assessment & trace metal correlation module
+* Machine learning toxicity classifier, virtual pH prediction & heavy-metals estimation module
 
 ## Project structure
 
